@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Holy Harvest — Salva las Almas</title>
+<title>incrAMENtal — Salva las Almas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
 <style>
@@ -170,6 +170,113 @@ body{
 #tree-tooltip .tt-val{color: var(--text-dark); font-size: .8rem; font-weight: 700; margin-bottom: 4px;}
 #tree-tooltip .tt-cost{color: #b58012; font-size: .9rem; font-weight: 700;}
 #tree-tooltip .tt-locked{color: #c44343; font-size: .8rem; font-weight: 700; margin-top: 4px;}
+/* ── INTRO CINEMÁTICA ── */
+#intro-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #0d0b0f;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+#intro-screen.hidden { display: none !important; }
+
+#intro-click-hint {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: intro-blink 1.8s ease-in-out infinite;
+}
+@keyframes intro-blink {
+  0%, 100% { opacity: 0.18; }
+  50%       { opacity: 0.65; }
+}
+
+#intro-slide-text {
+  font-family: 'Quicksand', sans-serif;
+  font-size: clamp(1.3rem, 3.5vw, 2.1rem);
+  font-weight: 700;
+  color: #f0ece2;
+  text-align: center;
+  max-width: 90vw;
+  width: max-content;
+  padding: 0 40px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  white-space: pre;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  opacity: 0;
+  transform: translateY(12px);
+}
+#intro-slide-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+#intro-slide-text.exit {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+/* Slide 0: pantalla de título con prompt */
+#intro-title-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.5s ease;
+}
+#intro-title-screen.hidden-fade { opacity: 0; pointer-events: none; }
+#intro-title-logo {
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 700;
+  color: #c8a84c;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 40px rgba(200,168,76,0.35);
+  font-family: 'Quicksand', sans-serif;
+}
+#intro-title-sub {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: rgba(255,255,255,0.28);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+#intro-start-prompt {
+  font-size: .88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: intro-blink 1.8s ease-in-out infinite;
+  margin-top: 8px;
+}
+
+#intro-progress {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+.intro-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  transition: background 0.3s;
+}
+.intro-dot.active { background: rgba(255,255,255,0.7); }
+
 /* ── PANEL LATERAL CAPILLA ── */
 #chapel-panel {
   position: absolute;
@@ -216,15 +323,108 @@ body{
 .chapel-upg-card .cu-cost { font-size: .82rem; font-weight: 700; color: #b8860b; }
 .chapel-upg-card .cu-level { font-size: .72rem; color: #888; margin-left: 6px; }
 .chapel-upg-card .cu-milestone { font-size: .68rem; color: #c44343; margin-top: 3px; }
+/* ── SELECTOR DE MUNDO ── */
+#btn-world-select {
+  position: absolute;
+  bottom: 68px; right: 24px;
+  z-index: 26;
+  background: #3a3050; color: #c8b8f0;
+  border: 2px solid #6050a0; border-radius: 8px;
+  padding: 10px 22px; font-size: .9rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; letter-spacing: 1px;
+  transition: all 0.12s; pointer-events: auto;
+  box-shadow: 0 3px 0 #1a1028;
+  white-space: nowrap;
+}
+#btn-world-select:hover { background: #4a4060; transform: translateY(-1px); }
+#btn-world-select:active { transform: translateY(1px); box-shadow: 0 1px 0 #1a1028; }
+
+#world-dropdown {
+  position: absolute;
+  bottom: 118px; right: 24px;
+  background: rgba(245,242,232,0.98);
+  border: 2px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 14px 12px 10px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 480px;
+  pointer-events: auto;
+}
+#world-dropdown.open { display: flex; }
+#world-dropdown-title {
+  font-size: .78rem; font-weight: 700; color: var(--text-muted);
+  text-align: center; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 2px;
+}
+#world-dropdown-cards {
+  display: flex; gap: 8px; justify-content: center;
+}
+.world-card {
+  background: #fff;
+  border: 2px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 130px; max-width: 160px;
+  cursor: pointer;
+  transition: all 0.13s;
+  text-align: center;
+  position: relative;
+  user-select: none;
+  flex: 1;
+}
+.world-card:hover:not(.locked) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-color: #9080c0; }
+.world-card.active { border: 3px solid #4a90d9; background: #eef4ff; }
+.world-card.locked { opacity: 0.5; cursor: default; filter: grayscale(0.5); }
+.world-card .wc-icon { font-size: 1.6rem; margin-bottom: 3px; }
+.world-card .wc-name { font-size: .8rem; font-weight: 700; color: var(--text-dark); }
+.world-card .wc-sub  { font-size: .65rem; color: var(--text-muted); margin-top: 2px; line-height: 1.3; }
+.world-card .wc-cost { font-size: .7rem; font-weight: 700; margin-top: 5px; }
+.world-card .wc-badge {
+  position: absolute; top: -8px; right: -8px;
+  color: #fff; font-size: .58rem; font-weight: 700;
+  border-radius: 20px; padding: 2px 6px; letter-spacing: .5px;
+}
+.world-card .wc-badge.owned  { background: #22c55e; }
+.world-card .wc-badge.active { background: #2563eb; }
 </style>
 </head>
 <body>
+
+<!-- ══════════════ INTRO CINEMÁTICA ══════════════ -->
+<div id="intro-screen">
+  <!-- Pantalla 0: título + "haz click para empezar" -->
+  <div id="intro-title-screen">
+    <div id="intro-title-logo">incrAMENtal</div>
+    <div id="intro-title-sub">— Salva las Almas —</div>
+    <div id="intro-start-prompt">· Haz click para empezar ·</div>
+  </div>
+
+  <!-- Slides 1-6: texto narrativo (oculto al inicio) -->
+  <div id="intro-slide-text"></div>
+
+  <!-- Indicador de progreso (solo en slides) -->
+  <div id="intro-progress" style="display:none">
+    <div class="intro-dot" data-i="0"></div>
+    <div class="intro-dot" data-i="1"></div>
+    <div class="intro-dot" data-i="2"></div>
+    <div class="intro-dot" data-i="3"></div>
+    <div class="intro-dot" data-i="4"></div>
+    <div class="intro-dot" data-i="5"></div>
+  </div>
+
+  <div id="intro-click-hint" style="display:none">· click para continuar ·</div>
+</div>
 
 <div id="view-outside" class="active">
   <canvas id="outside-canvas"></canvas>
   
   <div class="hud-container">
     <div id="hud-timer" class="hud-title">00:10</div>
+    <div style="font-size:0.72rem;color:var(--text-muted);margin-top:-4px;margin-bottom:3px">🕊️ Energía de Vuelo</div>
     <div id="hud-souls" class="hud-item" style="color:#b8860b">✨ <span id="hud-souls-val">0</span> Almas</div>
     <div id="hud-total-souls" class="hud-item" style="color:#888;font-size:.85rem">Total salvadas: <span id="hud-total-val">0</span></div>
     <div id="hud-faith" class="hud-item">🙏 Fe: <span id="hud-faith-val">0</span></div>
@@ -233,7 +433,7 @@ body{
 
   <div id="start-overlay" class="overlay">
     <div class="menu-box">
-      <h1 style="color: #496337;">HOLY HARVEST</h1>
+      <h1 style="color: #496337;">incrAMENtal</h1>
       <p style="font-weight: 700; color: var(--panel-border);">— SALVA A LAS ALMAS —</p>
       <div class="overlay-divider"></div>
       <p>El tiempo apremia. Pasa el halo celestial rápidamente sobre los aldeanos para convencerlos antes de que el reloj llegue a cero.</p>
@@ -289,6 +489,13 @@ body{
   
   <button id="btn-preach" class="btn-game" style="border-color: #564f5e;">🌾 Salir a Predicar <span style="font-size:0.75em;opacity:0.55">[Space]</span></button>
   <button id="btn-tree" class="btn-game" style="border-color: #564f5e;">🌿 Árbol de Mejoras</button>
+  <button id="btn-world-select">🗺️ Elegir Escenario ▲</button>
+
+  <!-- DROPDOWN DE MUNDOS -->
+  <div id="world-dropdown">
+    <div id="world-dropdown-title">🗺️ Elige dónde predicar</div>
+    <div id="world-dropdown-cards"></div>
+  </div>
 </div>
 
 <div id="tree-overlay" class="hidden">
@@ -317,13 +524,13 @@ body{
 // ══════════════════════════════════════════════════════
 const G = {
   // Recursos
-  souls: 0,           // Almas acumuladas
-  soulsTotal: 0,      // Almas totales salvadas EVER
-  faithfulCount: 0,   // Número de fieles en la capilla
-  faith: 0,         
-  money: 0,         
+  souls: 0,
+  soulsTotal: 0,
+  faithfulCount: 0,
+  faith: 0,
+  money: 0,
   roundTimer: 0,
-  roundDuration: 10, 
+  roundDuration: 10,
   isRoundActive: false,
   day: 1,
   soulsThisRound: 0,
@@ -334,6 +541,13 @@ const G = {
   currentView: 'outside',
   roundHistory: [],
   mouseMovedThisFrame: false,
+  // Paloma jugadora (Espíritu Santo)
+  doveX: 200, doveY: 200,
+  doveVX: 0, doveVY: 0,
+  doveWing: 0,
+  doveAngle: 0,
+  // Mundo actual de predicación
+  currentWorld: 'base',  // 'base' | 'spectral' | 'infernal'
 };
 
 const U = {
@@ -341,18 +555,18 @@ const U = {
   holyRadius:  {sec:'out', name:'Radio del Halo',       desc:'Incrementa el área de conversión espiritual.',       cost:10,  bc:10,  lv:1, sc:1.4, v:35,  inc:20,  faith:true,  money:false, milestone:0},
   holyRate:    {sec:'out', name:'Frecuencia del Sermón', desc:'Reduce el tiempo entre pulsos de convicción.',       cost:10,  bc:10,  lv:1, sc:1.5, v:1.2, inc:0.3, faith:true,  money:false, milestone:0},
   holyDmg:     {sec:'out', name:'Fervor Divino',         desc:'Aumenta la fuerza de persuasión del halo.',         cost:10,  bc:10,  lv:1, sc:1.4, v:8,   inc:4,   faith:false, money:true,  milestone:0},
-  sinnerCount: {sec:'out', name:'Población Aldeana',     desc:'Atrae más pecadores simultáneos al mapa.',           cost:10,  bc:10,  lv:1, sc:1.6, v:5,   inc:8,   faith:false, money:true,  milestone:0},
+  sinnerCount: {sec:'out', name:'Población Aldeana',     desc:'Atrae más pecadores simultáneos al mapa.',           cost:10,  bc:10,  lv:1, sc:1.6, v:20,  inc:8,   faith:false, money:true,  milestone:0},
   chainConv:   {sec:'out', name:'Milagro en Cadena',     desc:'Probabilidad de que un alma redimida atraiga otra.', cost:50,  bc:50,  lv:1, sc:1.8, v:0.0, inc:0.1, faith:true,  money:true,  milestone:500,  isSpecial:true},
-  roundTime:   {sec:'out', name:'Día Prolongado',        desc:'Añade valiosos segundos a cada jornada.',           cost:20,  bc:20,  lv:1, sc:1.5, v:0,   inc:4,   faith:false, money:true,  milestone:0},
+  roundTime:   {sec:'out', name:'Energía de Vuelo',      desc:'El Espíritu Santo puede volar durante más tiempo en cada jornada.',           cost:20,  bc:20,  lv:1, sc:1.5, v:0,   inc:4,   faith:false, money:true,  milestone:0},
+  playerSpeed: {sec:'out', name:'Alas del Espíritu',     desc:'Aumenta la velocidad de vuelo del Espíritu Santo.',  cost:15, bc:15, lv:1, sc:1.4, v:180, inc:40, faith:true, money:false, milestone:0},
   soulsPerConv:{sec:'out', name:'Cosecha Abundante',     desc:'Cada aldeano convertido otorga más almas.',         cost:35,  bc:35,  lv:1, sc:1.6, v:1,   inc:1,   faith:true,  money:true,  milestone:200},
-  mouseRadius: {sec:'out', name:'Manos Benditas',        desc:'Amplía el radio de bendición en la capilla.',       cost:25,  bc:25,  lv:1, sc:1.5, v:22,  inc:14,  faith:true,  money:false, milestone:100},
 
   // ── MASCOTAS ──
-  petUnlock:   {sec:'out', name:'Mascotas del Señor',    desc:'Desbloquea mascotas sagradas que deambulan por el mapa. Al convertirlas obtienes almas.', cost:80, bc:80, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:1000, isToggle:true, on:false},
-  petCount:    {sec:'out', name:'Más Mascotas',          desc:'Aumenta el número de mascotas que aparecen en el mapa.',  cost:40, bc:40, lv:1, sc:1.5, v:3,   inc:3,  faith:false, money:true,  milestone:1000},
-  petSouls:    {sec:'out', name:'Almas Peludas',         desc:'Las mascotas otorgan más almas al ser convertidas.',       cost:30, bc:30, lv:1, sc:1.5, v:2,   inc:2,  faith:true,  money:false, milestone:1000},
-  petChain:    {sec:'out', name:'Llamada Animal',        desc:'Al convertir una mascota hay probabilidad de que aparezca otra.',  cost:50, bc:50, lv:1, sc:1.8, v:0.1, inc:0.1, faith:true, money:true, milestone:1000},
-  petOwner:    {sec:'out', name:'Dueño Devoto',          desc:'Al convertir una mascota, hay % de que su dueño se convierta automáticamente.',  cost:60, bc:60, lv:1, sc:1.8, v:0.1, inc:0.1, faith:true, money:true, milestone:1000},
+  petUnlock:   {sec:'out', name:'Mascotas del Señor',    desc:'Desbloquea mascotas sagradas que deambulan por el mapa. Al convertirlas obtienes almas.', cost:80, bc:80, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:0, isToggle:true, on:false, requiresWorld:'fauna'},
+  petCount:    {sec:'out', name:'Más Mascotas',          desc:'Aumenta el número de mascotas que aparecen en el mapa.',  cost:40, bc:40, lv:1, sc:1.5, v:10,  inc:5,  faith:false, money:true,  milestone:0, requiresWorld:'fauna'},
+  petSouls:    {sec:'out', name:'Almas Peludas',         desc:'Las mascotas otorgan más almas al ser convertidas.',       cost:30, bc:30, lv:1, sc:1.5, v:2,   inc:2,  faith:true,  money:false, milestone:0, requiresWorld:'fauna'},
+  petChain:    {sec:'out', name:'Llamada Animal',        desc:'Al convertir una mascota hay probabilidad de que aparezca otra.',  cost:50, bc:50, lv:1, sc:1.8, v:0.1, inc:0.1, faith:true, money:true, milestone:0, requiresWorld:'fauna'},
+  petOwner:    {sec:'out', name:'Dueño Devoto',          desc:'Al convertir una mascota, hay % de que su dueño se convierta automáticamente.',  cost:60, bc:60, lv:1, sc:1.8, v:0.1, inc:0.1, faith:true, money:true, milestone:0, requiresWorld:'fauna'},
 
   // ── DORADOS ──
   goldenUnlock:{sec:'out', name:'Elegidos Dorados',      desc:'Aparecen aldeanos y mascotas dorados con más vida pero con recompensas mucho mejores.', cost:70, bc:70, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:1500, isToggle:true, on:false},
@@ -360,9 +574,10 @@ const U = {
   goldenBonus: {sec:'out', name:'Tesoro Celestial',      desc:'Los seres dorados otorgan más almas, fe y dinero.',         cost:50, bc:50, lv:1, sc:1.5, v:3,    inc:2,    faith:true,  money:true,  milestone:1500},
 
   // ── MARKETING ──
-  marketUnlock:{sec:'out', name:'Evangelistas',          desc:'Al convertir un aldeano, emite rayos sagrados a los aldeanos cercanos causándoles daño.', cost:90, bc:90, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:2000, isToggle:true, on:false},
+  marketUnlock:{sec:'out', name:'Evangelistas',          desc:'Algunos aldeanos nacen ya iluminados. Al convertirlos, emiten rayos sagrados a los vecinos cercanos.', cost:90, bc:90, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:2000, isToggle:true, on:false},
+  marketRate:  {sec:'out', name:'Más Evangelistas',      desc:'Aumenta la probabilidad de que un aldeano sea un evangelista.', cost:25, bc:25, lv:1, sc:1.5, v:0.15, inc:0.1, faith:true, money:false, milestone:2000},
   marketDmg:   {sec:'out', name:'Fuerza del Rayo',       desc:'Aumenta el daño del rayo evangelista.',                    cost:30, bc:30, lv:1, sc:1.4, v:15,   inc:10,  faith:false, money:true,  milestone:2000},
-  marketRange: {sec:'out', name:'Alcance del Rayo',      desc:'Aumenta el alcance del rayo evangelista.',                 cost:30, bc:30, lv:1, sc:1.4, v:80,   inc:40,  faith:true,  margin:false, milestone:2000},
+  marketRange: {sec:'out', name:'Alcance del Rayo',      desc:'Aumenta el alcance del rayo evangelista.',                 cost:30, bc:30, lv:1, sc:1.4, v:80,   inc:40,  faith:true,  money:false, milestone:2000},
   marketJumps: {sec:'out', name:'Cadena de Rayos',       desc:'El rayo salta a más aldeanos cercanos.',                   cost:50, bc:50, lv:1, sc:1.6, v:2,    inc:1,   faith:true,  money:true,  milestone:2000},
 
   // ── PALOMAS ──
@@ -374,25 +589,59 @@ const U = {
   doveDuration:{sec:'out', name:'Devoción Duradera',     desc:'Las palomas capturadas duran más tiempo.',                 cost:30, bc:30, lv:1, sc:1.5, v:6,    inc:3,   faith:true,  money:true,  milestone:2500},
   doveFlock:   {sec:'out', name:'Bandada Sagrada',       desc:'Pueden aparecer múltiples palomas a la vez.',              cost:70, bc:70, lv:1, sc:1.6, v:1,    inc:1,   faith:true,  money:true,  milestone:3000},
 
-  // ── FANTASMAS ──
-  ghostUnlock: {sec:'out', name:'Almas Errantes',        desc:'Fantasmas grandes y poderosos vagan por el mapa. Más duros pero con mayor recompensa.', cost:120, bc:120, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:5000, isToggle:true, on:false},
-  ghostCount:  {sec:'out', name:'Más Fantasmas',         desc:'Aumenta el número de fantasmas que aparecen.',             cost:60, bc:60, lv:1, sc:1.6, v:2,   inc:1,  faith:true,  money:true,  milestone:5000},
-  ghostSouls:  {sec:'out', name:'Ánimas Abundantes',     desc:'Los fantasmas otorgan más almas al ser exorcizados.',      cost:50, bc:50, lv:1, sc:1.5, v:5,   inc:3,  faith:true,  money:false, milestone:5000},
-  ghostChain:  {sec:'out', name:'Cadena Espectral',      desc:'Al exorcizar un fantasma hay % de que aparezca otro.',     cost:60, bc:60, lv:1, sc:1.8, v:0.1, inc:0.1,faith:true,  money:true,  milestone:5000},
+  // ── EXPLOSIÓN DE LUZ ──
+  lightBlastUnlock:{sec:'out', name:'Explosión de Luz',  desc:'Probabilidad de que al convertir un enemigo explote una onda de luz sagrada dañando a todos los cercanos.', cost:60, bc:60, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:2000, isToggle:true, on:false},
+  lightBlastChance:{sec:'out', name:'Más Explosiones',   desc:'Aumenta la probabilidad de que ocurra una explosión de luz.', cost:30, bc:30, lv:1, sc:1.5, v:0.15, inc:0.1, faith:true, money:false, milestone:2000},
+  lightBlastDmg:   {sec:'out', name:'Luz Cegadora',      desc:'Aumenta el daño de la explosión de luz.',                    cost:30, bc:30, lv:1, sc:1.4, v:30,   inc:20,  faith:false, money:true,  milestone:2000},
+  lightBlastRadius:{sec:'out', name:'Onda Expansiva',    desc:'Aumenta el radio de la explosión de luz.',                   cost:25, bc:25, lv:1, sc:1.4, v:80,   inc:30,  faith:true,  money:false, milestone:2000},
 
-  // ── TUMBAS ──
-  tombUnlock:  {sec:'out', name:'Tumbas Malditas',       desc:'Aparecen tumbas enormes y resistentes. Al destruirlas spawnean muchos fantasmas.', cost:200, bc:200, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:10000, isToggle:true, on:false},
-  tombRate:    {sec:'out', name:'Maldición Creciente',   desc:'Las tumbas aparecen con más frecuencia.',                  cost:80, bc:80, lv:1, sc:1.6, v:0.05, inc:0.03, faith:true, money:true,  milestone:10000},
-  tombSouls:   {sec:'out', name:'Reliquia Sagrada',      desc:'Las tumbas dan más almas al ser destruidas.',              cost:80, bc:80, lv:1, sc:1.5, v:20,   inc:10,   faith:true,  money:true,  milestone:10000},
-  tombGhosts:  {sec:'out', name:'Tumulto de Ánimas',     desc:'Cada tumba destruida libera más fantasmas.',               cost:60, bc:60, lv:1, sc:1.5, v:3,    inc:2,    faith:false, money:true,  milestone:10000},
+  // ── CRUZ DE FUEGO ──
+  fireCrossUnlock: {sec:'out', name:'Cruz de Fuego',     desc:'Al convertir un enemigo hay probabilidad de que aparezca una cruz de fuego sagrado que convierte a los cercanos.', cost:80, bc:80, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:3000, isToggle:true, on:false},
+  fireCrossChance: {sec:'out', name:'Más Cruces',        desc:'Aumenta la probabilidad de que aparezca una cruz de fuego.', cost:35, bc:35, lv:1, sc:1.5, v:0.12, inc:0.08, faith:true, money:false, milestone:3000},
+  fireCrossDmg:    {sec:'out', name:'Fervor Ardiente',   desc:'Aumenta el daño por segundo de la cruz de fuego.',           cost:35, bc:35, lv:1, sc:1.4, v:20,   inc:15,  faith:false, money:true,  milestone:3000},
+  fireCrossSize:   {sec:'out', name:'Cruz Monumental',   desc:'Aumenta el tamaño de la cruz de fuego.',                     cost:30, bc:30, lv:1, sc:1.4, v:60,   inc:30,  faith:true,  money:false, milestone:3000},
+
+  // ── MISILES SAGRADOS ──
+  missileUnlock:   {sec:'out', name:'Misiles Sagrados',  desc:'La paloma lanza misiles sagrados automáticamente hacia los enemigos cercanos.', cost:100, bc:100, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:4000, isToggle:true, on:false},
+  missileRate:     {sec:'out', name:'Cadencia Divina',   desc:'Los misiles se disparan más rápido.',                        cost:40, bc:40, lv:1, sc:1.5, v:2,   inc:0.5, faith:false, money:true,  milestone:4000},
+  missileDmg:      {sec:'out', name:'Impacto Sagrado',   desc:'Aumenta el daño de cada misil.',                             cost:35, bc:35, lv:1, sc:1.4, v:25,  inc:15,  faith:true,  money:false, milestone:4000},
+  missileBlast:    {sec:'out', name:'Radio de Impacto',  desc:'Los misiles explotan con mayor radio al impactar.',          cost:30, bc:30, lv:1, sc:1.4, v:30,  inc:15,  faith:true,  money:true,  milestone:4000},
+
+  // ── RAYO CONTINUO ──
+  tetherUnlock:    {sec:'out', name:'Rayo Divino',       desc:'Un rayo continuo conecta la paloma con enemigos dentro de su aura, causando daño periódico.', cost:120, bc:120, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:5000, isToggle:true, on:false},
+  tetherDmg:       {sec:'out', name:'Voltaje Celestial', desc:'Aumenta el daño del rayo divino.',                           cost:45, bc:45, lv:1, sc:1.5, v:20,  inc:15,  faith:false, money:true,  milestone:5000},
+  tetherCount:     {sec:'out', name:'Más Rayos',         desc:'El rayo puede conectar con más enemigos a la vez.',          cost:50, bc:50, lv:1, sc:1.6, v:1,   inc:1,   faith:true,  money:true,  milestone:5000},
+  tetherRate:      {sec:'out', name:'Pulso Frecuente',   desc:'El rayo impacta con más frecuencia.',                        cost:40, bc:40, lv:1, sc:1.5, v:1.5, inc:0.5, faith:true,  money:false, milestone:5000},
+
+  // ── FANTASMAS (activos solo en mundo espectral) ──
+  ghostUnlock: {sec:'out', name:'Almas Errantes',        desc:'Fantasmas grandes y poderosos vagan por el mapa. Más duros pero con mayor recompensa.', cost:120, bc:120, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:0, isToggle:true, on:false, requiresWorld:'spectral'},
+  ghostCount:  {sec:'out', name:'Más Fantasmas',         desc:'Aumenta el número de fantasmas que aparecen.',             cost:60, bc:60, lv:1, sc:1.6, v:5,   inc:2,  faith:true,  money:true,  milestone:0, requiresWorld:'spectral'},
+  ghostSouls:  {sec:'out', name:'Ánimas Abundantes',     desc:'Los fantasmas otorgan más almas al ser exorcizados.',      cost:50, bc:50, lv:1, sc:1.5, v:5,   inc:3,  faith:true,  money:false, milestone:0, requiresWorld:'spectral'},
+  ghostChain:  {sec:'out', name:'Cadena Espectral',      desc:'Al exorcizar un fantasma hay % de que aparezca otro.',     cost:60, bc:60, lv:1, sc:1.8, v:0.1, inc:0.1,faith:true,  money:true,  milestone:0, requiresWorld:'spectral'},
+
+  // ── TUMBAS (activas solo en mundo espectral) ──
+  tombUnlock:  {sec:'out', name:'Tumbas Malditas',       desc:'Aparecen tumbas enormes y resistentes. Al destruirlas spawnean muchos fantasmas.', cost:200, bc:200, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:0, isToggle:true, on:false, requiresWorld:'spectral'},
+  tombRate:    {sec:'out', name:'Maldición Creciente',   desc:'Las tumbas aparecen con más frecuencia.',                  cost:80, bc:80, lv:1, sc:1.6, v:0.05, inc:0.03, faith:true, money:true,  milestone:0, requiresWorld:'spectral'},
+  tombSouls:   {sec:'out', name:'Reliquia Sagrada',      desc:'Las tumbas dan más almas al ser destruidas.',              cost:80, bc:80, lv:1, sc:1.5, v:20,   inc:10,   faith:true,  money:true,  milestone:0, requiresWorld:'spectral'},
+  tombGhosts:  {sec:'out', name:'Tumulto de Ánimas',     desc:'Cada tumba destruida libera más fantasmas.',               cost:60, bc:60, lv:1, sc:1.5, v:3,    inc:2,    faith:false, money:true,  milestone:0, requiresWorld:'spectral'},
+
+  // ── DEMONIOS (activos solo en mundo infernal) ──
+  demonUnlock: {sec:'out', name:'Puertas del Infierno',  desc:'Necesitamos más almas para salvar, así que hemos abierto las puertas del infierno para conseguirlas. Enormes demonios invaden el mapa con gran botín.', cost:300, bc:300, lv:1, sc:99, v:1, inc:0, faith:true, money:true, milestone:0, isToggle:true, on:false, requiresWorld:'infernal'},
+  demonCount:  {sec:'out', name:'Más Demonios',          desc:'Aumenta el número de demonios que aparecen simultáneamente.', cost:120, bc:120, lv:1, sc:1.6, v:2, inc:1, faith:true, money:true, milestone:0, requiresWorld:'infernal'},
+  demonSouls:  {sec:'out', name:'Botín Infernal',        desc:'Los demonios otorgan más almas al ser redimidos.',          cost:100, bc:100, lv:1, sc:1.5, v:15, inc:8, faith:true, money:true, milestone:0, requiresWorld:'infernal'},
+  demonChain:  {sec:'out', name:'Legión Demoniaca',      desc:'Al redimir un demonio hay % de que aparezca otro.',         cost:100, bc:100, lv:1, sc:1.8, v:0.1, inc:0.1, faith:true, money:true, milestone:0, requiresWorld:'infernal'},
 
   // ── INTERIOR ──
   faithfulCap: {sec:'in', name:'Fieles en la Capilla',  desc:'Compra un fiel adicional para la capilla.',         soulCost:1,  bc:1,  lv:0, sc:1.5, v:0,   inc:1,  milestone:0,   chapelUpg:true, isFaithful:true},
   faithPerFlock:{sec:'in', name:'Oración Profunda',     desc:'Los fieles producen más Fe al ser bendecidos.',     soulCost:20, bc:20, lv:0, sc:1.4, v:2,   inc:2,  milestone:50,  chapelUpg:true},
   moneyPerFlock:{sec:'in', name:'Limosna Generosa',     desc:'Los fieles diezman mayor cantidad de dinero.',      soulCost:20, bc:20, lv:0, sc:1.4, v:3,   inc:3,  milestone:50,  chapelUpg:true},
+  prayerCooldown:{sec:'in',name:'Fervor del Rezo',      desc:'Reduce el tiempo de espera antes de poder volver a recolectar recursos de un fiel.', soulCost:30, bc:30, lv:0, sc:1.5, v:3.0, inc:-0.25, milestone:100, chapelUpg:true, isPrayerCD:true},
   acolyte:     {sec:'in', name:'Monaguillos',           desc:'Añade un monaguillo automático. Cada compra suma uno.', soulCost:60, bc:60, lv:0, sc:1.9, v:0, inc:1,  milestone:150, chapelUpg:true, isAcolyte:true, count:0},
   acolyteSpeed:{sec:'in', name:'Zapatos Ligeros',       desc:'Incrementa la velocidad de los monaguillos.',       soulCost:40, bc:40, lv:0, sc:1.5, v:1.5, inc:0.5,milestone:200, chapelUpg:true},
   priest:      {sec:'in', name:'Sacerdotes',            desc:'Un sacerdote crea un aura sagrada que multiplica Fe y Dinero.', soulCost:100, bc:100, lv:0, sc:2.2, v:0, inc:1, milestone:500, chapelUpg:true, isPriest:true, count:0},
+  petFaithful: {sec:'in', name:'Mascotas del Rebaño',   desc:'Añade una mascota como fiel. Las mascotas también generan recursos al ser bendecidas.', soulCost:80, bc:80, lv:0, sc:1.7, v:0, inc:1, milestone:1000, chapelUpg:true, isPetFaithful:true, count:0},
+  ghostFaithful:{sec:'in',name:'Espíritus del Rebaño',  desc:'Invoca un fantasma como fiel etéreo. Los fantasmas generan más recursos al rezar.', soulCost:150, bc:150, lv:0, sc:1.8, v:0, inc:1, milestone:0, chapelUpg:true, isGhostFaithful:true, count:0, requiresWorld:'spectral'},
+  demonFaithful:{sec:'in',name:'Demonios Redimidos',    desc:'Un demonio redimido sirve en la capilla. Genera enormes cantidades de recursos al rezar.', soulCost:500, bc:500, lv:0, sc:2.5, v:0, inc:1, milestone:0, chapelUpg:true, isDemonFaithful:true, count:0, requiresWorld:'infernal'},
 };
 
 // ══════════════════════════════════════════════════════
@@ -424,6 +673,77 @@ function generateEnvironmentProps(W, H) {
       size: 3 + Math.random() * 4,
       seed: Math.random()
     });
+  }
+}
+
+function drawAtmosphere(ctx, W, H){
+  if(U.demonUnlock && U.demonUnlock.on){
+    // Red hellish fog at edges
+    const fog = ctx.createRadialGradient(W/2,H/2,H*0.2,W/2,H/2,H*0.8);
+    fog.addColorStop(0,'rgba(0,0,0,0)');
+    fog.addColorStop(1,'rgba(180,20,0,0.45)');
+    ctx.fillStyle=fog; ctx.fillRect(0,0,W,H);
+
+    // Cracks in the ground (drawn once per frame as static patterns using a seeded approach)
+    ctx.save();
+    ctx.strokeStyle='rgba(255,60,0,0.55)'; ctx.lineWidth=1.5;
+    ctx.shadowColor='#ff3300'; ctx.shadowBlur=6;
+    const crackSeeds=[{x:0.15,y:0.7},{x:0.35,y:0.55},{x:0.6,y:0.75},{x:0.8,y:0.45},{x:0.25,y:0.85},{x:0.7,y:0.6},{x:0.5,y:0.9}];
+    crackSeeds.forEach(c=>{
+      const cx=c.x*W, cy=c.y*H;
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+(Math.sin(cx*0.01+cy*0.007)*40-20), cy+30);
+      ctx.lineTo(cx+(Math.sin(cx*0.013+cy*0.009)*30-15), cy+60);
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+(Math.sin(cy*0.011+cx*0.006)*30), cy+40);
+      ctx.stroke();
+      // Orange glow core of cracks
+      const gr=ctx.createLinearGradient(cx,cy,cx,cy+60);
+      gr.addColorStop(0,'rgba(255,120,0,0.6)'); gr.addColorStop(1,'rgba(255,40,0,0)');
+      ctx.strokeStyle=gr; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,cy+60); ctx.stroke();
+      ctx.strokeStyle='rgba(255,60,0,0.55)'; ctx.lineWidth=1.5;
+    });
+    ctx.restore();
+
+    // Flickering fire particles (use time for flicker)
+    const t = Date.now()*0.001;
+    const fireSpots=[{x:0.1,y:0.9},{x:0.4,y:0.95},{x:0.65,y:0.88},{x:0.85,y:0.92},{x:0.3,y:0.75},{x:0.7,y:0.8}];
+    fireSpots.forEach((fs,i)=>{
+      const fx=fs.x*W, fy=fs.y*H;
+      const flicker=0.6+0.4*Math.sin(t*4+i*2.3);
+      const h=20+Math.sin(t*3+i)*15;
+      ctx.save();
+      const fg=ctx.createLinearGradient(fx,fy,fx,fy-h*2);
+      fg.addColorStop(0,'rgba(255,80,0,'+0.9*flicker+')');
+      fg.addColorStop(0.4,'rgba(255,160,0,'+0.6*flicker+')');
+      fg.addColorStop(1,'rgba(255,220,0,0)');
+      ctx.fillStyle=fg;
+      ctx.shadowColor='#ff4400'; ctx.shadowBlur=20*flicker;
+      ctx.beginPath();
+      ctx.moveTo(fx-8,fy);
+      ctx.bezierCurveTo(fx-6,fy-h*0.5, fx+Math.sin(t*5+i)*6-3, fy-h, fx,fy-h*1.8);
+      ctx.bezierCurveTo(fx+Math.sin(t*4+i)*6+3,fy-h, fx+6,fy-h*0.5, fx+8,fy);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    });
+  } else if(U.ghostUnlock && U.ghostUnlock.on){
+    // Ghostly blue-purple fog
+    const fog=ctx.createRadialGradient(W/2,H/2,H*0.15,W/2,H/2,H*0.75);
+    fog.addColorStop(0,'rgba(0,0,0,0)');
+    fog.addColorStop(1,'rgba(10,20,80,0.5)');
+    ctx.fillStyle=fog; ctx.fillRect(0,0,W,H);
+    // Wisps
+    const t=Date.now()*0.001;
+    for(let i=0;i<6;i++){
+      const wx=W*(0.1+i*0.15+Math.sin(t*0.4+i)*0.05);
+      const wy=H*(0.3+Math.sin(t*0.6+i*1.7)*0.2);
+      ctx.save();
+      ctx.globalAlpha=0.12+0.06*Math.sin(t+i);
+      ctx.fillStyle='#a0c8ff';
+      ctx.shadowColor='#5080ff'; ctx.shadowBlur=30;
+      ctx.beginPath(); ctx.arc(wx,wy,40+20*Math.sin(t*0.5+i),0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
   }
 }
 
@@ -658,6 +978,12 @@ const outCanvas = document.getElementById('outside-canvas');
 const outCtx = outCanvas.getContext('2d');
 let sinners = [], particles = [], holyParticles = [], floatingTexts = [];
 let pulseRings = []; // efecto visual al impactar con el área del mouse
+let lightBlasts = [];   // explosiones de luz
+let fireCrosses = [];   // cruces de fuego
+let missiles = [];      // misiles sagrados
+let tetherBeams = [];   // rayos continuos
+let missileTimer = 0;
+let tetherTimer = 0;
 
 class PulseRing {
   constructor(x, y, r){
@@ -781,6 +1107,8 @@ class Sinner {
     this.hp = this.maxHp;
     this.gold = 1 + Math.floor(Math.random() * 2);
     this.faith = 1;
+    // Evangelista: % de probabilidad según mejora
+    this.isEvangelist = U.marketUnlock.on && Math.random() < U.marketRate.v;
     
     const W = outCanvas.width, H = outCanvas.height;
     const cx = W / 2, cy = H / 2;
@@ -850,6 +1178,34 @@ class Sinner {
     const bob = Math.abs(Math.sin(this.bobPhase)) * -4;
     const drawColor = this.converting ? '#f5f5f5' : this.color;
     drawDigseumVillager(ctx, this.x, this.y, drawColor, bob, this.scale);
+
+    // Evangelista: corona de rayos eléctricos
+    if(this.isEvangelist && !this.converting){
+      ctx.save();
+      ctx.strokeStyle = '#e8f060';
+      ctx.fillStyle = '#fff9a0';
+      ctx.shadowColor = '#e8f060';
+      ctx.shadowBlur = 6;
+      ctx.lineWidth = 1.5;
+      // Zigzag crown on top of head
+      const bx = this.x - 7, by = this.y - 22;
+      ctx.beginPath();
+      ctx.moveTo(bx, by);
+      ctx.lineTo(bx+3.5, by-6);
+      ctx.lineTo(bx+7, by-2);
+      ctx.lineTo(bx+10.5, by-8);
+      ctx.lineTo(bx+14, by);
+      ctx.stroke();
+      // Small spark dots
+      ctx.fillStyle = '#ffe040';
+      ctx.shadowBlur = 8;
+      [[-4, -3],[0, -5],[4, -3]].forEach(([dx, dy]) => {
+        ctx.beginPath();
+        ctx.arc(this.x + dx, this.y - 26 + dy, 1.3, 0, Math.PI*2);
+        ctx.fill();
+      });
+      ctx.restore();
+    }
 
     if(this.hasHalo && this.scale > 0.1){
       ctx.save();
@@ -1228,38 +1584,45 @@ class Tomb {
 class Dove {
   constructor(){
     const W=outCanvas.width, H=outCanvas.height;
-    this.x = Math.random()*W; this.y = 30 + Math.random()*80;
-    this.angle = Math.random()*Math.PI*2;
-    this.speed = 70 + Math.random()*50;
+    // Spawn anywhere on screen (not just top strip)
+    const edge = Math.floor(Math.random()*4);
+    if(edge===0){ this.x=-20; this.y=Math.random()*H; }
+    else if(edge===1){ this.x=W+20; this.y=Math.random()*H; }
+    else if(edge===2){ this.x=Math.random()*W; this.y=-20; }
+    else { this.x=Math.random()*W; this.y=H+20; }
+    // Angle pointing inward
+    this.angle = Math.atan2(H/2-this.y, W/2-this.x) + (Math.random()-0.5)*1.2;
+    this.speed = 80 + Math.random()*60;
     this.flapPhase = Math.random()*Math.PI*2;
     this.captured = false; this.isDead = false;
-    this.capturedTimer = 0;
+    this.lifetime = 12 + Math.random()*8;
+    this.age = 0;
   }
   update(dt){
-    if(this.captured){
-      this.capturedTimer += dt;
-      if(this.capturedTimer >= U.doveDuration.v) { this.isDead = true; return; }
-      return;
-    }
+    if(this.captured) return;
     this.flapPhase += dt*9;
-    this.angle += Math.sin(Date.now()*0.0003 + this.flapPhase*0.1)*0.01;
+    this.age += dt;
+    if(this.age > this.lifetime){ this.isDead = true; return; }
+    // Gentle curve across the whole screen
+    this.angle += (Math.random()-0.5)*0.04;
     this.x += Math.cos(this.angle)*this.speed*dt;
-    this.y += Math.sin(this.angle*0.5)*20*dt;
+    this.y += Math.sin(this.angle)*this.speed*dt;
     const W=outCanvas.width, H=outCanvas.height;
-    if(this.x<-30 || this.x>W+30) this.isDead=true;
-    if(this.y<0) this.y=0;
-    if(this.y>H*0.35) this.y=H*0.35;
-
-    const dx=this.x-G.mouseX, dy=this.y-G.mouseY;
-    if(Math.hypot(dx,dy) < 40) this.captured=true;
+    // Soft bounce off edges
+    const m=30;
+    if(this.x<m){ this.angle=Math.PI-this.angle; this.x=m; }
+    if(this.x>W-m){ this.angle=Math.PI-this.angle; this.x=W-m; }
+    if(this.y<m){ this.angle=-this.angle; this.y=m; }
+    if(this.y>H-m){ this.angle=-this.angle; this.y=H-m; }
+    // Capture when inside player dove halo
+    if(Math.hypot(this.x-G.doveX, this.y-G.doveY) < U.holyRadius.v) this.captured=true;
   }
   draw(ctx){
     if(this.captured) return;
     ctx.save();
     const flap = Math.sin(this.flapPhase)*0.6;
     ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle + (this.angle > Math.PI ? Math.PI : 0));
-    
+    ctx.rotate(this.angle);
     ctx.fillStyle='#f0ece4'; ctx.strokeStyle='#b8a898'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.ellipse(0,0,9,5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(-3,-4+flap*3,7,3,-0.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
@@ -1270,7 +1633,7 @@ class Dove {
 }
 
 class CapturedDove {
-  constructor(doveRef){
+  constructor(){
     this.orbitAngle = Math.random()*Math.PI*2;
     this.orbitAngleSelf = Math.random()*Math.PI*2;
     this.timer = 0;
@@ -1279,20 +1642,21 @@ class CapturedDove {
     this.timer+=dt;
     this.orbitAngle += U.doveSpeed.v*dt;
     this.orbitAngleSelf+=dt*12;
-    const r = U.doveRadius.v;
-    this.x = G.mouseX + Math.cos(this.orbitAngle)*r;
-    this.y = G.mouseY + Math.sin(this.orbitAngle)*r;
+    // Orbit around the PLAYER DOVE, not the mouse
+    const r = U.doveRadius ? U.doveRadius.v : 80;
+    this.x = G.doveX + Math.cos(this.orbitAngle)*r;
+    this.y = G.doveY + Math.sin(this.orbitAngle)*r;
     if(this.timer >= U.doveDuration.v) return false;
-
     const dmg = U.doveDmg.v * dt * 4;
-    [...sinners, ...pets, ...ghosts].forEach(e=>{
+    [...sinners, ...pets, ...ghosts, ...demons].forEach(e=>{
       if(e.isDead||e.converting) return;
-      if(Math.hypot(e.x-this.x, e.y-this.y)<18){
+      if(Math.hypot(e.x-this.x, e.y-this.y)<22){
         e.hp -= dmg;
         if(e.hp<=0){
           if(e instanceof Sinner) convertSinner(e);
           else if(e instanceof Pet) convertPet(e);
           else if(e instanceof Ghost) convertGhost(e);
+          else if(e instanceof Demon) convertDemon(e);
         }
       }
     });
@@ -1303,17 +1667,146 @@ class CapturedDove {
     const flap=Math.sin(this.orbitAngleSelf)*0.7;
     ctx.translate(this.x,this.y);
     ctx.rotate(this.orbitAngle);
-    ctx.fillStyle='#fffde8'; ctx.strokeStyle='#b8a898'; ctx.lineWidth=1;
-    ctx.shadowColor='#ffe44d'; ctx.shadowBlur=8;
-    ctx.beginPath(); ctx.ellipse(0,0,8,4.5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(-2,-3+flap*2.5,6,2.5,-0.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(-2,3-flap*2.5,6,2.5,0.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    // Bigger: 12x7 instead of 8x4.5
+    ctx.fillStyle='#fffde8'; ctx.strokeStyle='#b8a898'; ctx.lineWidth=1.2;
+    ctx.shadowColor='#ffe44d'; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.ellipse(0,0,12,7,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-3,-5+flap*3.5,9,4,-0.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-3,5-flap*3.5,9,4,0.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#e8e0d4'; ctx.beginPath(); ctx.arc(11,0,4.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.restore();
   }
 }
 
+let demons = [];
+let demonSpawnTimer = 0;
+
+class Demon {
+  constructor(isGolden=false){
+    this.isGolden = isGolden;
+    const mult = isGolden ? 3 : 1;
+    this.maxHp = (350 + G.day * 40) * mult;
+    this.hp = this.maxHp;
+    const W=outCanvas.width, H=outCanvas.height, cx=W/2, cy=H/2;
+    let att=0;
+    do { const m=80; this.x=m+Math.random()*(W-m*2); this.y=m+Math.random()*(H-m*2); }
+    while(Math.hypot(this.x-cx,this.y-cy)<160 && ++att<30);
+    this.angle = Math.random()*Math.PI*2;
+    this.floatPhase = Math.random()*Math.PI*2;
+    this.roarPhase = Math.random()*Math.PI*2;
+    this.converting = false; this.isDead = false;
+    this.scale = 2.2;
+    this.hasHalo = false;
+    this.wanderTimer = 0; this.wanderInterval = 1.5+Math.random()*2.5;
+  }
+  update(dt){
+    if(this.converting){
+      const cx=outCanvas.width/2, cy=outCanvas.height/2+35;
+      const dx=cx-this.x, dy=cy-this.y, dist=Math.hypot(dx,dy);
+      if(dist>8){this.x+=(dx/dist)*120*dt; this.y+=(dy/dist)*120*dt;}
+      if(dist<18) this.isDead=true;
+      return;
+    }
+    this.floatPhase+=dt*1.5;
+    this.roarPhase+=dt*3;
+    this.wanderTimer+=dt;
+    if(this.wanderTimer>=this.wanderInterval){
+      this.wanderTimer=0; this.angle+=(Math.random()-0.5)*2;
+      this.wanderInterval=1.5+Math.random()*2.5;
+    }
+    const spd=30;
+    const nx=this.x+Math.cos(this.angle)*spd*dt, ny=this.y+Math.sin(this.angle)*spd*dt;
+    const m=50;
+    if(nx<m||nx>outCanvas.width-m) this.angle=Math.PI-this.angle;
+    if(ny<m||ny>outCanvas.height-m) this.angle=-this.angle;
+    this.x+=Math.cos(this.angle)*spd*dt;
+    this.y+=Math.sin(this.angle)*spd*dt+Math.sin(this.floatPhase)*0.4;
+  }
+  draw(ctx){
+    const bob=Math.sin(this.floatPhase)*5;
+    const roar=0.5+0.5*Math.sin(this.roarPhase);
+    ctx.save();
+    ctx.translate(this.x, this.y+bob);
+    ctx.scale(this.scale, this.scale);
+
+    // Shadow
+    ctx.beginPath(); ctx.ellipse(0,14,16,5,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fill();
+
+    // Glow aura
+    ctx.shadowColor = this.isGolden ? '#ffd700' : '#ff3300';
+    ctx.shadowBlur = 20+roar*10;
+
+    // Body
+    const bodyGrd = ctx.createLinearGradient(0,-18,0,14);
+    if(this.isGolden){
+      bodyGrd.addColorStop(0,'#fef08a'); bodyGrd.addColorStop(1,'#b45309');
+    } else {
+      bodyGrd.addColorStop(0,'#7f1d1d'); bodyGrd.addColorStop(1,'#1c0000');
+    }
+    ctx.fillStyle=bodyGrd;
+    ctx.beginPath();
+    ctx.ellipse(0,0,10,14,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle=this.isGolden?'#ca8a04':'#ff2200'; ctx.lineWidth=1; ctx.stroke();
+
+    // Horns
+    ctx.fillStyle=this.isGolden?'#854d0e':'#4a0000';
+    ctx.beginPath(); ctx.moveTo(-6,-12); ctx.lineTo(-10,-22); ctx.lineTo(-3,-15); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(6,-12); ctx.lineTo(10,-22); ctx.lineTo(3,-15); ctx.closePath(); ctx.fill();
+
+    // Wings
+    ctx.globalAlpha=0.7+roar*0.2;
+    ctx.fillStyle=this.isGolden?'rgba(202,138,4,0.5)':'rgba(120,0,0,0.6)';
+    ctx.beginPath(); ctx.moveTo(-8,0); ctx.bezierCurveTo(-20,-10,-28,5,-18,10); ctx.bezierCurveTo(-14,12,-8,8,-8,0); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(8,0); ctx.bezierCurveTo(20,-10,28,5,18,10); ctx.bezierCurveTo(14,12,8,8,8,0); ctx.fill();
+    ctx.globalAlpha=1;
+
+    // Eyes — glowing
+    ctx.fillStyle=this.isGolden?'#fef08a':'#ff4400';
+    ctx.shadowColor=this.isGolden?'#ffd700':'#ff2200'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.ellipse(-4,-4,2.5,3,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4,-4,2.5,3,0,0,Math.PI*2); ctx.fill();
+    // Pupils
+    ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(-4,-4,1,1.5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4,-4,1,1.5,0,0,Math.PI*2); ctx.fill();
+
+    // Claws/tail
+    ctx.strokeStyle=this.isGolden?'#b45309':'#7f1d1d'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(-4,12); ctx.lineTo(-7,20); ctx.moveTo(0,13); ctx.lineTo(0,21); ctx.moveTo(4,12); ctx.lineTo(7,20); ctx.stroke();
+
+    ctx.restore();
+
+    if(this.hasHalo){
+      ctx.save(); ctx.strokeStyle='#f6e050'; ctx.lineWidth=2.5;
+      ctx.shadowColor='#ffe44d'; ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.ellipse(this.x, this.y+bob-32, 14, 5, 0, 0, Math.PI*2); ctx.stroke(); ctx.restore();
+    }
+    if(this.hp<this.maxHp && !this.converting){
+      ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.fillRect(this.x-18,this.y-42,36,4);
+      ctx.fillStyle=this.isGolden?'#ffd700':'#ff4400';
+      ctx.fillRect(this.x-18,this.y-42,36*(this.hp/this.maxHp),4);
+    }
+  }
+}
+
+function convertDemon(demon){
+  if(demon.converting) return;
+  demon.converting=true; demon.hasHalo=true;
+  const mult = demon.isGolden ? (U.goldenBonus?U.goldenBonus.v:3) : 1;
+  const gained = Math.round(U.demonSouls.v * mult);
+  G.souls+=gained; G.soulsTotal+=gained; G.soulsThisRound+=gained;
+  G.faithThisRound+=Math.round(20*mult); G.moneyThisRound+=Math.round(20*mult);
+  floatingTexts.push(new FloatingText(demon.x,demon.y-45,`+${gained}✨🔥`,'#ff6600',28));
+  for(let i=0;i<60;i++) holyParticles.push(new HolyParticle(demon.x,demon.y));
+  if(Math.random()<U.demonChain.v) setTimeout(()=>demons.push(new Demon()),400);
+  triggerLightBlast(demon.x, demon.y);
+  triggerFireCross(demon.x, demon.y);
+  updateHUDs();
+}
+
 function convertPet(pet){
-  if(pet.converting) return;
   pet.converting=true; pet.hasHalo=true;
   const mult = pet.isGolden ? U.goldenBonus.v : 1;
   const gained = Math.round(U.petSouls.v * mult);
@@ -1323,6 +1816,8 @@ function convertPet(pet){
   floatingTexts.push(new FloatingText(pet.x, pet.y-25, `+${gained}✨`, '#e6c56c', 18));
   for(let i=0;i<18;i++) holyParticles.push(new HolyParticle(pet.x,pet.y));
   if(Math.random()<U.petChain.v) setTimeout(()=>pets.push(new Pet()),200);
+  triggerLightBlast(pet.x, pet.y);
+  triggerFireCross(pet.x, pet.y);
   if(Math.random()<U.petOwner.v){
     const nearby = sinners.filter(s=>!s.isDead&&!s.converting&&Math.hypot(s.x-pet.x,s.y-pet.y)<120);
     if(nearby.length) convertSinner(nearby[Math.floor(Math.random()*nearby.length)]);
@@ -1341,6 +1836,8 @@ function convertGhost(ghost){
   floatingTexts.push(new FloatingText(ghost.x,ghost.y-30,`+${gained}✨`, '#a0d4ff', 22));
   for(let i=0;i<35;i++) holyParticles.push(new HolyParticle(ghost.x,ghost.y));
   if(Math.random()<U.ghostChain.v) setTimeout(()=>ghosts.push(new Ghost()),300);
+  triggerLightBlast(ghost.x, ghost.y);
+  triggerFireCross(ghost.x, ghost.y);
   updateHUDs();
 }
 
@@ -1355,6 +1852,164 @@ function destroyTomb(tomb){
   const gCount = U.tombGhosts.v;
   for(let i=0;i<gCount;i++) setTimeout(()=>ghosts.push(new Ghost(false,tomb.x,tomb.y)),i*150);
   updateHUDs();
+}
+
+// ── HABILIDADES NUEVAS ──
+function triggerLightBlast(x, y){
+  if(!U.lightBlastUnlock.on || Math.random()>U.lightBlastChance.v) return;
+  lightBlasts.push({x, y, r:0, maxR:U.lightBlastRadius.v, life:0.55, maxLife:0.55});
+}
+function triggerFireCross(x, y){
+  if(!U.fireCrossUnlock.on || Math.random()>U.fireCrossChance.v) return;
+  fireCrosses.push({x, y, size:U.fireCrossSize.v, life:2.5, maxLife:2.5, phase:0});
+}
+
+function updateLightBlasts(dt, ctx){
+  lightBlasts = lightBlasts.filter(b=>{
+    b.life -= dt; b.r = b.maxR*(1 - b.life/b.maxLife);
+    const alpha = (b.life/b.maxLife)*0.7;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#fff9a0'; ctx.lineWidth = 3;
+    ctx.shadowColor = '#ffe44d'; ctx.shadowBlur = 18;
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.stroke();
+    ctx.globalAlpha = alpha*0.3;
+    ctx.fillStyle = '#fff9a0';
+    ctx.fill();
+    ctx.restore();
+    // Damage in expanding ring
+    const dmg = U.lightBlastDmg.v;
+    [...sinners,...pets,...ghosts,...demons].forEach(e=>{
+      if(e.isDead||e.converting) return;
+      const d=Math.hypot(e.x-b.x,e.y-b.y);
+      if(d<b.r && d>b.r-12){ e.hp-=dmg*dt*6; if(e.hp<=0) convertAny(e); }
+    });
+    return b.life>0;
+  });
+}
+
+function updateFireCrosses(dt, ctx){
+  fireCrosses = fireCrosses.filter(fc=>{
+    fc.life -= dt; fc.phase += dt*8;
+    const alpha = Math.min(1, fc.life/0.4) * 0.85;
+    const s = fc.size, hs = s*0.15;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = '#ff7020'; ctx.strokeStyle = '#ffe44d';
+    ctx.shadowColor='#ff4400'; ctx.shadowBlur=20; ctx.lineWidth=1.5;
+    // Vertical arm
+    ctx.fillRect(fc.x-hs, fc.y-s, hs*2, s*2);
+    ctx.strokeRect(fc.x-hs, fc.y-s, hs*2, s*2);
+    // Horizontal arm
+    ctx.fillRect(fc.x-s, fc.y-hs, s*2, hs*2);
+    ctx.strokeRect(fc.x-s, fc.y-hs, s*2, hs*2);
+    // Pulse glow
+    ctx.globalAlpha = alpha*0.3*(0.5+0.5*Math.sin(fc.phase));
+    ctx.fillStyle='#ff9020';
+    ctx.beginPath(); ctx.arc(fc.x, fc.y, s*0.9, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+    // Damage everything in cross area
+    const dmg = U.fireCrossDmg.v * dt;
+    [...sinners,...pets,...ghosts,...demons].forEach(e=>{
+      if(e.isDead||e.converting) return;
+      if(Math.abs(e.x-fc.x)<fc.size*1.1 || Math.abs(e.y-fc.y)<fc.size*1.1){
+        if(Math.hypot(e.x-fc.x,e.y-fc.y)<fc.size*1.4){ e.hp-=dmg; if(e.hp<=0) convertAny(e); }
+      }
+    });
+    return fc.life>0;
+  });
+}
+
+function updateMissiles(dt, ctx){
+  missiles = missiles.filter(m=>{
+    m.life -= dt;
+    m.x += Math.cos(m.angle)*380*dt;
+    m.y += Math.sin(m.angle)*380*dt;
+    // Draw missile
+    ctx.save();
+    ctx.translate(m.x, m.y); ctx.rotate(m.angle);
+    ctx.fillStyle='#ffe44d'; ctx.shadowColor='#ff9020'; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.ellipse(0,0,8,3,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,200,50,0.4)';
+    ctx.beginPath(); ctx.ellipse(-8,0,14,4,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // Hit check
+    const all=[...sinners,...pets,...ghosts,...demons];
+    for(let e of all){
+      if(e.isDead||e.converting) continue;
+      if(Math.hypot(e.x-m.x, e.y-m.y)<22){
+        e.hp -= U.missileDmg.v;
+        // Blast radius splash
+        const br = U.missileBlast.v;
+        all.forEach(e2=>{
+          if(e2.isDead||e2.converting||e2===e) return;
+          if(Math.hypot(e2.x-m.x,e2.y-m.y)<br){ e2.hp-=U.missileDmg.v*0.5; if(e2.hp<=0) convertAny(e2); }
+        });
+        // Blast ring visual
+        lightBlasts.push({x:m.x,y:m.y,r:0,maxR:br,life:0.3,maxLife:0.3});
+        if(e.hp<=0) convertAny(e);
+        return false;
+      }
+    }
+    return m.life>0;
+  });
+}
+
+function fireMissile(){
+  const all=[...sinners,...pets,...ghosts,...demons].filter(e=>!e.isDead&&!e.converting);
+  if(!all.length) return;
+  // Target nearest enemy to player dove
+  all.sort((a,b)=>Math.hypot(a.x-G.doveX,a.y-G.doveY)-Math.hypot(b.x-G.doveX,b.y-G.doveY));
+  const t = all[0];
+  const angle = Math.atan2(t.y-G.doveY, t.x-G.doveX);
+  missiles.push({x:G.doveX, y:G.doveY, angle, life:3});
+}
+
+// Active tether beam targets
+let tetherTargets = [];
+let tetherPulseTimer = 0;
+
+function updateTethers(dt, ctx){
+  if(!U.tetherUnlock.on) { tetherTargets=[]; return; }
+  // Pick targets inside dove radius
+  const r = U.holyRadius.v;
+  const candidates = [...sinners,...pets,...ghosts,...demons]
+    .filter(e=>!e.isDead&&!e.converting&&Math.hypot(e.x-G.doveX,e.y-G.doveY)<r);
+  tetherTargets = candidates.slice(0, Math.floor(U.tetherCount.v));
+
+  tetherPulseTimer += dt;
+  const pulsed = tetherPulseTimer >= (1/U.tetherRate.v);
+  if(pulsed) tetherPulseTimer=0;
+
+  tetherTargets.forEach(t=>{
+    // Draw lightning-style beam
+    ctx.save();
+    ctx.strokeStyle='#a0d4ff'; ctx.lineWidth=2;
+    ctx.shadowColor='#60b0ff'; ctx.shadowBlur=12;
+    ctx.globalAlpha=0.75+0.25*Math.sin(Date.now()*0.015);
+    ctx.beginPath();
+    const steps=8, dx=(t.x-G.doveX)/steps, dy=(t.y-G.doveY)/steps;
+    ctx.moveTo(G.doveX, G.doveY);
+    for(let i=1;i<steps;i++){
+      ctx.lineTo(G.doveX+dx*i+(Math.random()-0.5)*10, G.doveY+dy*i+(Math.random()-0.5)*10);
+    }
+    ctx.lineTo(t.x, t.y);
+    ctx.stroke();
+    ctx.restore();
+    // Damage on pulse
+    if(pulsed){
+      t.hp -= U.tetherDmg.v;
+      floatingTexts.push(new FloatingText(t.x, t.y-20, `⚡${U.tetherDmg.v}`, '#a0d4ff', 18));
+      if(t.hp<=0) convertAny(t);
+    }
+  });
+}
+
+function convertAny(e){
+  if(e instanceof Pet) convertPet(e);
+  else if(e instanceof Ghost) convertGhost(e);
+  else if(e instanceof Demon) convertDemon(e);
+  else convertSinner(e);
 }
 
 function spawnSinners(){
@@ -1404,18 +2059,21 @@ function convertSinner(sinner){
   for(let i=0; i<28; i++) holyParticles.push(new HolyParticle(sinner.x, sinner.y));
   for(let i=0; i<8; i++) particles.push(new DustParticle(sinner.x, sinner.y));
   if(Math.random() < U.chainConv.v) setTimeout(()=> sinners.push(new Sinner()), 150);
+  triggerLightBlast(sinner.x, sinner.y);
+  triggerFireCross(sinner.x, sinner.y);
   updateHUDs();
 }
 
 function doHolyPulse(){
   const r = U.holyRadius.v;
   const dmg = U.holyDmg.v;
+  const px = G.doveX, py = G.doveY;  // ← dove position
   const SPIRITUAL_MSGS = ['¡WOLOLO!', '¡Arrepiéntete!', '¡Amén!', '¡Fe!', '¡Aleluya!'];
   let anyHit = false;
 
   function hitEntity(e, onKill){
     if(e.isDead||e.converting) return;
-    const dx=e.x-G.mouseX, dy=e.y-G.mouseY;
+    const dx=e.x-px, dy=e.y-py;
     if(Math.hypot(dx,dy)<r){
       e.hp-=dmg;
       anyHit = true;
@@ -1431,27 +2089,40 @@ function doHolyPulse(){
 
   sinners.forEach(s=> hitEntity(s, e=>{
     convertSinner(e);
-    if(U.marketUnlock.on){
-      let targets=[...sinners,...pets,...ghosts].filter(t=>t!==e&&!t.isDead&&!t.converting&&Math.hypot(t.x-e.x,t.y-e.y)<U.marketRange.v);
-      targets = targets.slice(0, U.marketJumps.v);
-      targets.forEach(t=>{
-        lightningBolts.push({x1:e.x,y1:e.y,x2:t.x,y2:t.y,life:0.4});
-        t.hp -= U.marketDmg.v;
-        floatingTexts.push(new FloatingText(t.x,t.y-20,`⚡${U.marketDmg.v}`,'#e8f060',20));
-        if(t.hp<=0){
-          if(t instanceof Pet) convertPet(t);
-          else if(t instanceof Ghost) convertGhost(t);
-          else convertSinner(t);
+    if(e.isEvangelist){
+      const range = U.marketRange.v;
+      const jumps = Math.floor(U.marketJumps.v);
+      const dmg = U.marketDmg.v;
+      let candidates = [...sinners,...pets,...ghosts].filter(t=>t!==e&&!t.isDead&&!t.converting);
+      let cx = e.x, cy = e.y, jumped = 0, hitSet = new Set([e]);
+      while(jumped < jumps && candidates.length > 0){
+        let best = null, bestD = Infinity;
+        candidates.forEach(t=>{
+          if(hitSet.has(t)) return;
+          const d = Math.hypot(t.x-cx, t.y-cy);
+          if(d < range && d < bestD){ best=t; bestD=d; }
+        });
+        if(!best) break;
+        hitSet.add(best);
+        lightningBolts.push({x1:cx,y1:cy,x2:best.x,y2:best.y,life:0.4});
+        best.hp -= dmg;
+        floatingTexts.push(new FloatingText(best.x,best.y-20,`⚡${dmg}`,'#e8f060',20));
+        if(best.hp<=0){
+          if(best instanceof Pet) convertPet(best);
+          else if(best instanceof Ghost) convertGhost(best);
+          else convertSinner(best);
         }
-      });
+        cx=best.x; cy=best.y; jumped++;
+      }
     }
   }));
 
   pets.forEach(p=> hitEntity(p, convertPet));
   ghosts.forEach(g=> hitEntity(g, convertGhost));
+  demons.forEach(d=> hitEntity(d, convertDemon));
   tombs.forEach(t=>{
     if(t.isDead) return;
-    const dx=t.x-G.mouseX, dy=t.y-G.mouseY;
+    const dx=t.x-px, dy=t.y-py;
     if(Math.hypot(dx,dy)<r){
       t.hp-=dmg;
       anyHit = true;
@@ -1461,11 +2132,162 @@ function doHolyPulse(){
     }
   });
 
-  // Pulse ring visual cuando hay impacto
-  if(anyHit) pulseRings.push(new PulseRing(G.mouseX, G.mouseY, r));
+  if(anyHit) pulseRings.push(new PulseRing(px, py, r));
 }
 
-// ── CAMBIO EXTRA: AÑADIDA PUERTA MEDIEVAL A LA IGLESIA CENTRAL ──
+// ══════════════════════════════════════════════════════
+// ESPÍRITU SANTO — PALOMA JUGADORA
+// ══════════════════════════════════════════════════════
+function drawPlayerDove(ctx, x, y, wingPhase, angle, scale=1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.scale(scale, scale);
+
+  // Glow halo
+  const grd = ctx.createRadialGradient(0, 0, 2, 0, 0, 28);
+  grd.addColorStop(0, 'rgba(255,251,200,0.55)');
+  grd.addColorStop(0.5, 'rgba(255,240,150,0.18)');
+  grd.addColorStop(1, 'rgba(255,240,150,0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI*2); ctx.fill();
+
+  // Shadow
+  ctx.save(); ctx.translate(3, 6); ctx.scale(1, 0.35);
+  ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.fill(); ctx.restore();
+
+  const wf = Math.sin(wingPhase);
+  const wingLift = wf * 14;
+
+  // Wings
+  ctx.save();
+  ctx.fillStyle = '#f8f5ec';
+  ctx.strokeStyle = '#c8c0a8'; ctx.lineWidth = 1;
+  // Left wing
+  ctx.save(); ctx.rotate(-0.15);
+  ctx.beginPath();
+  ctx.moveTo(-3, -1);
+  ctx.bezierCurveTo(-12, wingLift - 8, -22, wingLift - 4, -20, wingLift + 2);
+  ctx.bezierCurveTo(-14, wingLift + 6, -4, 4, -3, 4);
+  ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  // Right wing
+  ctx.save(); ctx.rotate(0.15);
+  ctx.beginPath();
+  ctx.moveTo(3, -1);
+  ctx.bezierCurveTo(12, wingLift - 8, 22, wingLift - 4, 20, wingLift + 2);
+  ctx.bezierCurveTo(14, wingLift + 6, 4, 4, 3, 4);
+  ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  ctx.restore();
+
+  // Body
+  ctx.fillStyle = '#fdfaf5';
+  ctx.strokeStyle = '#d0c8b5'; ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(12, 0);
+  ctx.bezierCurveTo(12, -6, 4, -9, -1, -8);
+  ctx.bezierCurveTo(-7, -7, -13, -3, -14, 1);
+  ctx.bezierCurveTo(-13, 6, -6, 8, 0, 7);
+  ctx.bezierCurveTo(6, 6, 12, 4, 12, 0);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Tail feathers
+  ctx.fillStyle = '#f0ece0'; ctx.strokeStyle = '#c8c0a8'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-12, 2);
+  ctx.bezierCurveTo(-16, 4, -22, 2, -20, 8);
+  ctx.bezierCurveTo(-16, 10, -10, 7, -10, 5);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Head
+  ctx.fillStyle = '#fdfaf5'; ctx.strokeStyle = '#d0c8b5'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(8, -5, 6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+  // Eye
+  ctx.fillStyle = '#1a1a2a';
+  ctx.beginPath(); ctx.arc(10, -6, 1.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.beginPath(); ctx.arc(10.5, -6.5, 0.6, 0, Math.PI*2); ctx.fill();
+
+  // Beak
+  ctx.fillStyle = '#e8b860'; ctx.strokeStyle = '#b88830'; ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(13, -5); ctx.lineTo(18, -4); ctx.lineTo(13, -3); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // Golden cross shimmer on chest
+  ctx.strokeStyle = 'rgba(240,210,90,0.7)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(3, -4); ctx.lineTo(3, 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, -1); ctx.lineTo(6, -1); ctx.stroke();
+
+  ctx.restore();
+}
+
+// ── Update player dove physics ──
+function updatePlayerDove(dt){
+  if(!G.isRoundActive) return;
+  const speed = U.playerSpeed.v;
+  const dx = G.mouseX - G.doveX;
+  const dy = G.mouseY - G.doveY;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > 5) {
+    // Smooth steering toward mouse
+    const ax = (dx/dist) * speed;
+    const ay = (dy/dist) * speed;
+    G.doveVX += (ax - G.doveVX) * Math.min(1, dt * 6);
+    G.doveVY += (ay - G.doveVY) * Math.min(1, dt * 6);
+    // Target angle
+    G.doveAngle = Math.atan2(G.doveVY, G.doveVX);
+  } else {
+    G.doveVX *= 0.85;
+    G.doveVY *= 0.85;
+  }
+
+  G.doveX += G.doveVX * dt;
+  G.doveY += G.doveVY * dt;
+
+  // Clamp to canvas
+  const W = outCanvas.width, H = outCanvas.height;
+  G.doveX = Math.max(20, Math.min(W-20, G.doveX));
+  G.doveY = Math.max(20, Math.min(H-20, G.doveY));
+
+  G.doveWing += dt * 8;
+}
+
+// ── Draw chapel dove (interior) ──
+function drawChapelDove(ctx, x, y, wingPhase) {
+  ctx.save();
+  ctx.translate(x, y);
+  const wf = Math.sin(wingPhase);
+  const wingLift = wf * 8;
+  // Soft glow
+  const grd = ctx.createRadialGradient(0,0,2,0,0,22);
+  grd.addColorStop(0,'rgba(255,248,180,0.6)');
+  grd.addColorStop(1,'rgba(255,248,180,0)');
+  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(0,0,22,0,Math.PI*2); ctx.fill();
+  // Wings
+  ctx.fillStyle='#f8f5ec'; ctx.strokeStyle='#c8c0a8'; ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(-2,-1); ctx.bezierCurveTo(-10,wingLift-6,-16,wingLift-2,-14,wingLift+2);
+  ctx.bezierCurveTo(-9,wingLift+4,-2,3,-2,3); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(2,-1); ctx.bezierCurveTo(10,wingLift-6,16,wingLift-2,14,wingLift+2);
+  ctx.bezierCurveTo(9,wingLift+4,2,3,2,3); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Body
+  ctx.fillStyle='#fdfaf5'; ctx.strokeStyle='#d0c8b5'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.ellipse(0,0,8,5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // Head
+  ctx.beginPath(); ctx.arc(7,-3,4,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // Eye
+  ctx.fillStyle='#1a1a2a'; ctx.beginPath(); ctx.arc(8.5,-3.5,1,0,Math.PI*2); ctx.fill();
+  // Beak
+  ctx.fillStyle='#e8b860'; ctx.beginPath(); ctx.moveTo(10,-3); ctx.lineTo(14,-2); ctx.lineTo(10,-1); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// ══════════════════════════════════════════════════════
+// LOOP PRINCIPAL EXTERIOR
 function drawAccurateChurch(ctx, cx, cy) {
   ctx.save();
   ctx.strokeStyle = '#cbd4c5';
@@ -1554,9 +2376,6 @@ function drawAccurateChurch(ctx, cx, cy) {
   ctx.restore();
 }
 
-// ══════════════════════════════════════════════════════
-// LOOP PRINCIPAL EXTERIOR
-// ══════════════════════════════════════════════════════
 let lastTimeOut = 0;
 function loopOutside(ts){
   if(G.currentView !== 'outside'){ outRAF = null; return; }
@@ -1564,11 +2383,141 @@ function loopOutside(ts){
   lastTimeOut = ts;
 
   const W = outCanvas.width, H = outCanvas.height;
-  outCtx.clearRect(0,0,W,H);
-  outCtx.fillStyle = '#b2c5a9';
-  outCtx.fillRect(0,0,W,H);
+  outCtx.clearRect(0, 0, W, H);
 
+  // El fondo inicial verde se mantiene intacto siempre como base
+  outCtx.fillStyle = '#b2c5a9';
+  outCtx.fillRect(0, 0, W, H);
+
+  // Dibujamos el decorado base del césped e iglesia
   drawEnvironment(outCtx);
+
+  // ── EVOLUCIÓN DE FONDO SEGÚN MUNDO ACTIVO ──
+
+  if (G.currentWorld === 'fauna' && WORLDS.fauna.purchased) {
+    // Tono de fondo más vivo para el Prado Sagrado
+    outCtx.save();
+    outCtx.globalAlpha = 0.35;
+    outCtx.fillStyle = '#a1c885';
+    outCtx.fillRect(0, 0, W, H);
+    outCtx.globalAlpha = 1;
+
+    // Zonas de arena / Agility
+    outCtx.save();
+    outCtx.fillStyle = '#d2c29d';
+    outCtx.beginPath();
+    outCtx.arc(200, 300, 80, 0, Math.PI * 2);
+    outCtx.arc(W - 250, 200, 60, 0, Math.PI * 2);
+    outCtx.fill();
+    outCtx.restore();
+
+    // Vallas perimetrales decorativas
+    outCtx.save();
+    outCtx.strokeStyle = '#8c765c';
+    outCtx.lineWidth = 4;
+    outCtx.beginPath();
+    outCtx.moveTo(50, 60); outCtx.lineTo(W - 50, 60);
+    outCtx.moveTo(50, 70); outCtx.lineTo(W - 50, 70);
+    outCtx.stroke();
+    outCtx.fillStyle = '#6e5b47';
+    for (let vx = 50; vx < W - 50; vx += 40) {
+      outCtx.fillRect(vx, 50, 6, 28);
+    }
+    outCtx.restore();
+
+    // Cacas de perro 💩 (posiciones fijas para evitar parpadeo)
+    outCtx.save();
+    const poopPositions = [
+      {x: 120, y: 180}, {x: 280, y: 450}, {x: 550, y: 220},
+      {x: 720, y: 510}, {x: 880, y: 150}, {x: 400, y: 320}
+    ];
+    poopPositions.forEach((p) => {
+      outCtx.fillStyle = '#66462c';
+      outCtx.beginPath(); outCtx.arc(p.x, p.y, 8, 0, Math.PI * 2); outCtx.fill();
+      outCtx.beginPath(); outCtx.arc(p.x, p.y - 4, 6, 0, Math.PI * 2); outCtx.fill();
+      outCtx.beginPath(); outCtx.arc(p.x, p.y - 7, 3, 0, Math.PI * 2); outCtx.fill();
+      outCtx.fillStyle = 'rgba(0,0,0,0.15)';
+      outCtx.fillRect(p.x - 10, p.y + 1, 20, 2);
+      // Moscas animadas
+      outCtx.fillStyle = '#222222';
+      const offsetX = Math.sin(Date.now() * 0.05 + p.x) * 4;
+      const offsetY = Math.cos(Date.now() * 0.05 + p.y) * 4;
+      outCtx.fillRect(p.x - 4 + offsetX, p.y - 12 + offsetY, 1.5, 1.5);
+      outCtx.fillRect(p.x + 5 - offsetX, p.y - 10 + offsetY, 1.5, 1.5);
+    });
+    outCtx.restore();
+    outCtx.restore();
+  }
+
+  if (G.currentWorld === 'spectral' && WORLDS.spectral.purchased) {
+    outCtx.save();
+    // Capa atmosférica espectral azul (sin tapar el verde por completo)
+    let spectGrd = outCtx.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, Math.max(W, H));
+    spectGrd.addColorStop(0, 'rgba(30, 50, 90, 0.25)');
+    spectGrd.addColorStop(1, 'rgba(10, 20, 45, 0.6)');
+    outCtx.fillStyle = spectGrd;
+    outCtx.fillRect(0, 0, W, H);
+
+    // Renderizar Niebla Flotante Dinámica
+    const time = Date.now() * 0.001;
+    outCtx.fillStyle = 'rgba(160, 200, 255, 0.08)';
+    outCtx.shadowColor = '#4da6ff';
+    outCtx.shadowBlur = 15;
+    for (let i = 0; i < 4; i++) {
+      let fx = (time * (30 + i * 10)) % (W + 200) - 100;
+      let fy = H * 0.2 + Math.sin(time + i) * 60 + (i * H * 0.15);
+      outCtx.beginPath();
+      outCtx.arc(fx, fy, 120 + i * 30, 0, Math.PI * 2);
+      outCtx.fill();
+    }
+    outCtx.restore();
+  }
+
+  // ── EVOLUCIÓN ESTILO 2: DEMONIOS ──
+  if (G.currentWorld === 'infernal' && WORLDS.infernal.purchased) {
+    outCtx.save();
+    // Tinte rojizo perimetral opresivo
+    let hellGrd = outCtx.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, Math.max(W, H));
+    hellGrd.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    hellGrd.addColorStop(0.6, 'rgba(120, 20, 5, 0.35)');
+    hellGrd.addColorStop(1, 'rgba(50, 2, 0, 0.75)');
+    outCtx.fillStyle = hellGrd;
+    outCtx.fillRect(0, 0, W, H);
+
+    // Dibujar Grietas de Lava fijas/animadas en el suelo (Estilo Infernal)
+    outCtx.strokeStyle = 'rgba(240, 90, 30, 0.8)';
+    outCtx.shadowColor = '#ff4500';
+    outCtx.shadowBlur = 10;
+    outCtx.lineWidth = 3;
+    
+    // Grieta izquierda
+    outCtx.beginPath();
+    outCtx.moveTo(0, H * 0.8); outCtx.lineTo(W * 0.15, H * 0.75); outCtx.lineTo(W * 0.22, H * 0.85); outCtx.stroke();
+    // Grieta derecha
+    outCtx.beginPath();
+    outCtx.moveTo(W, H * 0.2); outCtx.lineTo(W * 0.85, H * 0.3); outCtx.lineTo(W * 0.78, H * 0.22); outCtx.stroke();
+
+    // Dibujar pequeñas llamaradas en los extremos del mapa
+    const fireTime = Date.now() * 0.02;
+    outCtx.fillStyle = '#ff6600';
+    for (let f = 0; f < 5; f++) {
+      let fireX = (W * 0.05) + (f * (W * 0.22)) * 0.3;
+      if (f % 2 === 0) fireX = W - fireX; // Distribuir en ambos lados
+      let fireY = H * 0.9 - (f * 20);
+      let fireSize = 15 + Math.sin(fireTime + f) * 6;
+      
+      outCtx.beginPath();
+      outCtx.moveTo(fireX - fireSize, fireY);
+      outCtx.quadraticCurveTo(fireX, fireY - fireSize * 2, fireX + Math.sin(fireTime)*5, fireY - fireSize * 2.8);
+      outCtx.quadraticCurveTo(fireX + fireSize, fireY - fireSize * 1.5, fireX + fireSize, fireY);
+      outCtx.closePath();
+      outCtx.fill();
+    }
+    outCtx.restore();
+  }
+
+  // Atmósfera celestial/general
+  drawAtmosphere(outCtx, W, H);
 
   if(G.isRoundActive){
     G.roundTimer += dt;
@@ -1587,20 +2536,18 @@ function loopOutside(ts){
 
     if(U.petUnlock.on){
       petSpawnTimer += dt;
-      if(petSpawnTimer > 4){
-        petSpawnTimer = 0;
-        while(pets.filter(p=>!p.isDead&&!p.converting).length < U.petCount.v)
-          pets.push(new Pet(U.goldenUnlock.on && Math.random()<U.goldenRate.v));
-      }
+      const ptarget = Math.floor(U.petCount.v);
+      const palive = pets.filter(p=>!p.isDead&&!p.converting).length;
+      if(palive < ptarget && petSpawnTimer > 0.5){ petSpawnTimer = 0; pets.push(new Pet(U.goldenUnlock.on && Math.random()<U.goldenRate.v)); }
+      else if(petSpawnTimer > 3){ petSpawnTimer = 0; }
     }
 
     if(U.ghostUnlock.on){
       ghostSpawnTimer += dt;
-      if(ghostSpawnTimer > 6){
-        ghostSpawnTimer = 0;
-        while(ghosts.filter(g=>!g.isDead&&!g.converting).length < U.ghostCount.v)
-          ghosts.push(new Ghost(U.goldenUnlock.on && Math.random()<U.goldenRate.v));
-      }
+      const gtarget = Math.floor(U.ghostCount.v);
+      const galive = ghosts.filter(g=>!g.isDead&&!g.converting).length;
+      if(galive < gtarget && ghostSpawnTimer > 0.5){ ghostSpawnTimer = 0; ghosts.push(new Ghost(U.goldenUnlock.on && Math.random()<U.goldenRate.v)); }
+      else if(ghostSpawnTimer > 4){ ghostSpawnTimer = 0; }
     }
 
     if(U.tombUnlock.on){
@@ -1609,6 +2556,14 @@ function loopOutside(ts){
         tombSpawnTimer = 0;
         if(Math.random()<U.tombRate.v && tombs.filter(t=>!t.isDead).length<3) tombs.push(new Tomb());
       }
+    }
+
+    if(U.demonUnlock && U.demonUnlock.on){
+      demonSpawnTimer += dt;
+      const dtarget = Math.floor(U.demonCount.v);
+      const dalive = demons.filter(d=>!d.isDead&&!d.converting).length;
+      if(dalive < dtarget && demonSpawnTimer > 0.5){ demonSpawnTimer = 0; demons.push(new Demon(U.goldenUnlock && U.goldenUnlock.on && Math.random()<(U.goldenRate?U.goldenRate.v:0))); }
+      else if(demonSpawnTimer > 5){ demonSpawnTimer = 0; }
     }
 
     if(U.doveUnlock.on){
@@ -1625,12 +2580,19 @@ function loopOutside(ts){
   drawAccurateChurch(outCtx, W/2, H/2);
 
   if(G.isRoundActive){
+    updatePlayerDove(dt);
+    // Draw aura ring around dove
     const r = U.holyRadius.v;
     outCtx.save();
-    outCtx.beginPath(); outCtx.arc(G.mouseX, G.mouseY, r, 0, Math.PI*2);
-    outCtx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-    outCtx.lineWidth = 1.5; outCtx.setLineDash([4, 4]); outCtx.stroke();
-    outCtx.restore();
+    outCtx.beginPath(); outCtx.arc(G.doveX, G.doveY, r, 0, Math.PI*2);
+    outCtx.strokeStyle = 'rgba(255, 251, 180, 0.65)';
+    outCtx.lineWidth = 2; outCtx.setLineDash([5, 4]); outCtx.stroke();
+    // Soft fill
+    const grd = outCtx.createRadialGradient(G.doveX,G.doveY,0,G.doveX,G.doveY,r);
+    grd.addColorStop(0,'rgba(255,251,180,0.06)');
+    grd.addColorStop(1,'rgba(255,251,180,0)');
+    outCtx.fillStyle=grd; outCtx.fill();
+    outCtx.setLineDash([]); outCtx.restore();
   }
 
   sinners.forEach(s => { s.update(dt); s.draw(outCtx); });
@@ -1641,6 +2603,9 @@ function loopOutside(ts){
 
   ghosts.forEach(g=>{g.update(dt); g.draw(outCtx);});
   ghosts = ghosts.filter(g=>!g.isDead);
+
+  demons.forEach(d=>{d.update(dt); d.draw(outCtx);});
+  demons = demons.filter(d=>!d.isDead);
 
   tombs.forEach(t=>{t.update(dt); t.draw(outCtx);});
   tombs = tombs.filter(t=>!t.isDead);
@@ -1653,6 +2618,18 @@ function loopOutside(ts){
 
   capturedDoves = capturedDoves.filter(d=>d.update(dt));
   capturedDoves.forEach(d=>d.draw(outCtx));
+
+  // ── NUEVAS HABILIDADES ──
+  updateTethers(dt, outCtx);
+  updateLightBlasts(dt, outCtx);
+  updateFireCrosses(dt, outCtx);
+
+  // Misiles sagrados auto-disparo
+  if(U.missileUnlock && U.missileUnlock.on && G.isRoundActive){
+    missileTimer += dt;
+    if(missileTimer >= 1/U.missileRate.v){ missileTimer=0; fireMissile(); }
+  }
+  updateMissiles(dt, outCtx);
 
   lightningBolts = lightningBolts.filter(b=>{ b.life-=dt; return b.life>0; });
   lightningBolts.forEach(b=>{
@@ -1667,7 +2644,7 @@ function loopOutside(ts){
       const jag=(Math.random()-0.5)*20;
       outCtx.lineTo(b.x1+dx*i+jag, b.y1+dy*i+jag);
     }
-    outCtx.lineTo(b.x2,b.y2); outCtx.stroke(); ctx.restore();
+    outCtx.lineTo(b.x2,b.y2); outCtx.stroke(); outCtx.restore();
   });
 
   particles = particles.filter(p => p.update(dt));
@@ -1681,6 +2658,11 @@ function loopOutside(ts){
 
   floatingTexts.forEach(t => { t.update(dt); t.draw(outCtx); });
   floatingTexts = floatingTexts.filter(t => t.alpha > 0);
+
+  // Draw the player dove (Espíritu Santo) on top of everything
+  if(G.isRoundActive){
+    drawPlayerDove(outCtx, G.doveX, G.doveY, G.doveWing, G.doveAngle, 1.0);
+  }
 
   outRAF = requestAnimationFrame(loopOutside);
 }
@@ -1720,7 +2702,7 @@ class Faithful {
   }
   activate(multiplier=1){
     if(this.activationCooldown > 0) return false;
-    this.activationCooldown = 3.0;
+    this.activationCooldown = Math.max(0.5, U.prayerCooldown.v);
     this.isPraying = true;
     this.prayFlash = 1;
     this.prayStyle = Math.floor(Math.random() * 3);
@@ -1802,18 +2784,286 @@ class Faithful {
   }
 }
 
+class PetFaithful extends Faithful {
+  constructor(index){
+    super(index);
+    this.petType = PET_TYPES[Math.floor(Math.random()*PET_TYPES.length)].name;
+    this.color = '#c8855e';
+    this.isPet = true;
+  }
+  activate(multiplier=1){
+    if(this.activationCooldown > 0) return false;
+    this.activationCooldown = Math.max(0.5, U.prayerCooldown.v);
+    this.isPraying = true;
+    this.prayFlash = 1;
+    // Pets give slightly different resources
+    const fe = Math.round(U.faithPerFlock.v * multiplier * 0.8);
+    const mo = Math.round(U.moneyPerFlock.v * multiplier * 1.3);
+    G.faith += fe;
+    G.money += mo;
+    floatingTexts.push(new FloatingText(this.x, this.y - 16, `+${mo}💰🐾`, multiplier > 1 ? '#ffd700' : '#f5c842', 22));
+    const orbCount = Math.min(Math.max(fe, 1), 3);
+    for(let i=0;i<orbCount;i++){
+      setTimeout(()=>faithOrbs.push(new FaithOrb(this.x+(Math.random()-0.5)*20, this.y+(Math.random()-0.5)*20, multiplier)), i*80);
+    }
+    updateHUDs();
+    return true;
+  }
+  draw(ctx){
+    const ready = this.activationCooldown <= 0;
+    if(this.prayFlash > 0){
+      ctx.save();
+      ctx.globalAlpha = this.prayFlash*0.6;
+      ctx.fillStyle='#ffe44d'; ctx.shadowColor='#ffe44d'; ctx.shadowBlur=20;
+      ctx.beginPath(); ctx.arc(this.x,this.y-4,18+(1-this.prayFlash)*14,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.translate(this.x, this.y + (this.isPraying?0:Math.sin(this.bobPhase)*2));
+    ctx.scale(0.9, 0.9);
+    drawPetSprite(ctx, this.petType, false);
+    ctx.restore();
+    if(this.isPraying){
+      ctx.save();
+      ctx.font='11px sans-serif'; ctx.fillStyle='#ffe44d'; ctx.textAlign='center';
+      ctx.fillText('🙏', this.x, this.y-18); ctx.restore();
+    } else if(ready){
+      const p=0.5+0.5*Math.sin(Date.now()*0.006);
+      ctx.save();
+      ctx.beginPath(); ctx.arc(this.x,this.y-16,3+p*2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,228,77,${0.7+p*0.3})`; ctx.fill();
+      ctx.strokeStyle='#c8a800'; ctx.lineWidth=1; ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+class GhostFaithful extends Faithful {
+  constructor(index){
+    super(index);
+    this.color = '#a0c8e0';
+    this.isGhostFaithful = true;
+    this.floatPhase = Math.random()*Math.PI*2;
+  }
+  activate(multiplier=1){
+    if(this.activationCooldown > 0) return false;
+    this.activationCooldown = Math.max(0.5, U.prayerCooldown.v);
+    this.isPraying = true;
+    this.prayFlash = 1;
+    // Ghosts give more resources
+    const fe = Math.round(U.faithPerFlock.v * multiplier * 2.0);
+    const mo = Math.round(U.moneyPerFlock.v * multiplier * 1.5);
+    G.faith += fe;
+    G.money += mo;
+    floatingTexts.push(new FloatingText(this.x, this.y-16, `+${mo}💰👻`, multiplier>1?'#a0d4ff':'#c0e8ff', 22));
+    const orbCount = Math.min(Math.max(fe,1),6);
+    for(let i=0;i<orbCount;i++){
+      setTimeout(()=>faithOrbs.push(new FaithOrb(this.x+(Math.random()-0.5)*20,this.y+(Math.random()-0.5)*20,multiplier*1.5)),i*60);
+    }
+    updateHUDs();
+    return true;
+  }
+  update(dt){
+    this.floatPhase+=dt*2.2;
+    super.update(dt);
+  }
+  draw(ctx){
+    const ready = this.activationCooldown<=0;
+    const floatY = Math.sin(this.floatPhase)*4;
+    ctx.save();
+    ctx.globalAlpha = 0.82;
+    ctx.translate(this.x, this.y+floatY);
+    // Mini ghost body
+    const gc = ctx.createLinearGradient(0,-10,0,10);
+    gc.addColorStop(0,'rgba(220,240,255,0.9)'); gc.addColorStop(1,'rgba(160,200,230,0.1)');
+    ctx.fillStyle=gc;
+    ctx.shadowColor='#a0c8e0'; ctx.shadowBlur=8;
+    ctx.beginPath();
+    ctx.moveTo(-7,-4); ctx.bezierCurveTo(-7,-14,7,-14,7,-4); ctx.lineTo(7,6);
+    ctx.bezierCurveTo(4,10,2,4,0,7); ctx.bezierCurveTo(-2,4,-4,10,-7,6);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#3a5870';
+    ctx.beginPath(); ctx.ellipse(-2.5,-3,2,2.5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(2.5,-3,2,2.5,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    if(this.isPraying){
+      ctx.save(); ctx.font='11px sans-serif'; ctx.fillStyle='#a0d4ff'; ctx.textAlign='center';
+      ctx.fillText('🙏',this.x,this.y-18); ctx.restore();
+    } else if(ready){
+      const p=0.5+0.5*Math.sin(Date.now()*0.006);
+      ctx.save();
+      ctx.beginPath(); ctx.arc(this.x,this.y-16,3+p*2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(160,212,255,${0.7+p*0.3})`; ctx.fill();
+      ctx.strokeStyle='#60a0c0'; ctx.lineWidth=1; ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+let petFaithfuls = [];
+let ghostFaithfuls = [];
+let demonFaithfuls = [];
+
+class DemonFaithful extends Faithful {
+  constructor(index){
+    super(index);
+    this.color = '#7f1d1d';
+    this.isDemonFaithful = true;
+    this.floatPhase = Math.random()*Math.PI*2;
+    this.roarPhase = Math.random()*Math.PI*2;
+  }
+  activate(multiplier=1){
+    if(this.activationCooldown > 0) return false;
+    this.activationCooldown = Math.max(0.5, U.prayerCooldown.v);
+    this.isPraying = true; this.prayFlash = 1;
+    const fe = Math.round(U.faithPerFlock.v * multiplier * 4.0);
+    const mo = Math.round(U.moneyPerFlock.v * multiplier * 4.0);
+    G.faith += fe; G.money += mo;
+    floatingTexts.push(new FloatingText(this.x, this.y-16, `+${mo}💰🔥`, multiplier>1?'#ff6600':'#ff8800', 24));
+    const orbCount = Math.min(Math.max(fe,1),8);
+    for(let i=0;i<orbCount;i++){
+      setTimeout(()=>faithOrbs.push(new FaithOrb(this.x+(Math.random()-0.5)*20,this.y+(Math.random()-0.5)*20,multiplier*2)),i*50);
+    }
+    updateHUDs();
+    return true;
+  }
+  update(dt){
+    this.floatPhase+=dt*1.8; this.roarPhase+=dt*2.5;
+    super.update(dt);
+  }
+// Reemplaza el método draw dentro de la clase de tus Demonios:
+draw(ctx) {
+  const bob = Math.sin(this.bobPhase) * 2;
+  ctx.save();
+  ctx.translate(this.x, this.y + bob);
+
+  // Escala si es un Elegido Dorado o si quieres que se vea más grande/imponente
+  const sizeScale = this.isGolden ? 1.5 : 1.2;
+  ctx.scale(sizeScale, sizeScale);
+
+  // 1. Alas membranosas batientes de demonio (Detrás del cuerpo)
+  const wingFlap = Math.sin(Date.now() * 0.01) * 0.3;
+  ctx.fillStyle = this.isGolden ? '#78350f' : '#2b0505';
+  ctx.strokeStyle = this.isGolden ? '#fef08a' : '#1a0202';
+  ctx.lineWidth = 1.5;
+
+  // Ala Izquierda
+  ctx.save();
+  ctx.rotate(-0.4 + wingFlap);
+  ctx.beginPath();
+  ctx.moveTo(-5, -5);
+  ctx.quadraticCurveTo(-25, -25, -35, -5);
+  ctx.quadraticCurveTo(-20, 5, -5, 5);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // Ala Derecha
+  ctx.save();
+  ctx.rotate(0.4 - wingFlap);
+  ctx.beginPath();
+  ctx.moveTo(5, -5);
+  ctx.quadraticCurveTo(25, -25, 35, -5);
+  ctx.quadraticCurveTo(20, 5, 5, 5);
+  ctx.fill(); ctx.stroke();
+  ctx.restore();
+
+  // 2. Cuerpo musculoso/robusto (Tono piel del infierno)
+  ctx.fillStyle = this.isGolden ? '#d97706' : '#991b1b'; 
+  ctx.strokeStyle = this.isGolden ? '#fef08a' : '#450a0a';
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  // Cabeza y hombros imponentes
+  ctx.moveTo(-12, 10);
+  ctx.lineTo(-14, -8);
+  ctx.quadraticCurveTo(0, -18, 14, -8);
+  ctx.lineTo(12, 10);
+  ctx.lineTo(0, 16);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // 3. Cuernos góticos curvados hacia arriba
+  ctx.fillStyle = this.isGolden ? '#fef08a' : '#111111';
+  // Cuerno izquierdo
+  ctx.beginPath();
+  ctx.moveTo(-8, -12);
+  ctx.quadraticCurveTo(-18, -25, -12, -32);
+  ctx.quadraticCurveTo(-10, -22, -2, -14);
+  ctx.fill();
+  // Cuerno derecho
+  ctx.beginPath();
+  ctx.moveTo(8, -12);
+  ctx.quadraticCurveTo(18, -25, 12, -32);
+  ctx.quadraticCurveTo(10, -22, 2, -14);
+  ctx.fill();
+
+  // 4. Ojos de Fuego Brillante (Inyectados en maldad)
+  ctx.fillStyle = '#ffea00';
+  ctx.shadowColor = '#ff3300';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  // Ojos rasgados e imponentes hacia arriba
+  ctx.moveTo(-6, -6); ctx.lineTo(-2, -4); ctx.lineTo(-5, -2); ctx.closePath();
+  ctx.moveTo(6, -6); ctx.lineTo(2, -4); ctx.lineTo(5, -2); ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+
+  // ── MANTENER LÓGICA DE HALO / BARRA DE VIDA EXISTENTE DETRÁS DE ESTO ──
+  if (this.hasHalo) {
+    ctx.save();
+    ctx.strokeStyle = '#f6e050';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(this.x, this.y + bob - 24, 12, 4, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (this.hp < this.maxHp && !this.converting) {
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(this.x - 15, this.y - 34, 30, 4);
+    ctx.fillStyle = this.isGolden ? '#ffd700' : '#ff4500';
+    ctx.fillRect(this.x - 15, this.y - 34, 30 * (this.hp / this.maxHp), 4);
+  }
+}
+}
+
 class Acolyte {
   constructor(id){
     this.id = id;
-    this.x = window.innerWidth / 2;
+    this.x = window.innerWidth / 2 + (id - 1) * 40;
     this.y = window.innerHeight * 0.7;
-    this.targetIndex = 0;
+    this.targetIndex = id; // Start offset so they don't all pick the same
     this.activateTimer = 0;
+  }
+  pickNextTarget(){
+    if(faithful.length === 0) return;
+    // Find a faithful that is NOT praying, choosing one different from other acolytes if possible
+    const usedIndexes = acolytes.filter(a=>a!==this).map(a=>a.targetIndex);
+    // Try to find an available (not praying, not already targeted) faithful
+    const candidates = faithful
+      .map((f,i)=>({f,i}))
+      .filter(({f,i})=> !f.isPraying && !usedIndexes.includes(i));
+    if(candidates.length > 0){
+      const pick = candidates[Math.floor(Math.random()*candidates.length)];
+      this.targetIndex = pick.i;
+    } else {
+      // Fallback: any non-praying faithful
+      const any = faithful.map((f,i)=>({f,i})).filter(({f})=>!f.isPraying);
+      if(any.length>0) this.targetIndex = any[Math.floor(Math.random()*any.length)].i;
+      else this.targetIndex = (this.targetIndex + 1) % faithful.length;
+    }
   }
   update(dt){
     if(faithful.length === 0) return;
     const speed = U.acolyteSpeed.v * 95;
-    const target = faithful[this.targetIndex % faithful.length];
+    let target = faithful[this.targetIndex % faithful.length];
+    // If target is praying or doesn't exist, pick a new one
+    if(!target || target.isPraying) {
+      this.pickNextTarget();
+      target = faithful[this.targetIndex % faithful.length];
+    }
     if(!target) return;
     
     const dx = target.x - this.x, dy = target.y - this.y;
@@ -1824,8 +3074,9 @@ class Acolyte {
       if(this.activateTimer >= 0.35){
         this.activateTimer = 0;
         const mult = target._priestMult || 1;
-        target.activate(mult);
-        this.targetIndex = (this.targetIndex + 1) % faithful.length;
+        const activated = target.activate(mult);
+        if(!activated || target.isPraying) this.pickNextTarget(); // Move on immediately if already praying
+        else this.pickNextTarget();
       }
     } else {
       this.x += (dx/dist)*speed*dt;
@@ -1840,6 +3091,7 @@ class Acolyte {
     ctx.restore();
   }
 }
+
 
 let priests = [];
 
@@ -1913,6 +3165,45 @@ function layoutFaithful(){
     faithful.push(f);
   }
   if(faithful.length > maxFaithful) faithful.splice(maxFaithful);
+
+  // Pet faithfuls
+  const maxPets = U.petFaithful.count || 0;
+  while(petFaithfuls.length < maxPets){
+    const pf = new PetFaithful(petFaithfuls.length);
+    const W=inCanvas.width, H=inCanvas.height;
+    const i=petFaithfuls.length;
+    pf.x = W*0.1 + (i%4)*55 + pf.offsetX;
+    pf.y = H*0.72 + Math.floor(i/4)*40 + pf.offsetY;
+    pf.targetX=pf.x; pf.targetY=pf.y;
+    petFaithfuls.push(pf);
+  }
+  if(petFaithfuls.length > maxPets) petFaithfuls.splice(maxPets);
+
+  // Ghost faithfuls
+  const maxGhosts = U.ghostFaithful.count || 0;
+  while(ghostFaithfuls.length < maxGhosts){
+    const gf = new GhostFaithful(ghostFaithfuls.length);
+    const W=inCanvas.width, H=inCanvas.height;
+    const i=ghostFaithfuls.length;
+    gf.x = W*0.55 + (i%4)*55 + gf.offsetX;
+    gf.y = H*0.72 + Math.floor(i/4)*40 + gf.offsetY;
+    gf.targetX=gf.x; gf.targetY=gf.y;
+    ghostFaithfuls.push(gf);
+  }
+  if(ghostFaithfuls.length > maxGhosts) ghostFaithfuls.splice(maxGhosts);
+
+  // Demon faithfuls
+  const maxDemons = (U.demonFaithful && U.demonFaithful.count) || 0;
+  while(demonFaithfuls.length < maxDemons){
+    const df = new DemonFaithful(demonFaithfuls.length);
+    const W=inCanvas.width, H=inCanvas.height;
+    const i=demonFaithfuls.length;
+    df.x = W*0.3 + (i%4)*55 + df.offsetX;
+    df.y = H*0.83 + Math.floor(i/4)*40 + df.offsetY;
+    df.targetX=df.x; df.targetY=df.y;
+    demonFaithfuls.push(df);
+  }
+  if(demonFaithfuls.length > maxDemons) demonFaithfuls.splice(maxDemons);
 }
 
 function updateAcolytes(){
@@ -1926,187 +3217,187 @@ function drawInteriorDesign(ctx, W, H) {
   ctx.fillStyle = '#6b6575';
   ctx.fillRect(0,0,W,H);
 
-  // 1. VENTANAS OJIVALES CON VIDRIERAS MÁS DETALLADAS
+  // 1. VENTANAS OJIVALES CON VIDRIERAS
   const windowPositions = [W * 0.32, W * 0.5, W * 0.68];
   windowPositions.forEach((wx, idx) => {
     ctx.save();
     // Marco exterior arqueado
-    ctx.fillStyle = '#56505e';
+    ctx.fillStyle = '#4f4a56';
     ctx.beginPath();
-    ctx.moveTo(wx - 25, H * 0.25);
-    ctx.lineTo(wx - 25, H * 0.12);
-    ctx.quadraticCurveTo(wx - 25, H * 0.02, wx, H * 0.01);
-    ctx.quadraticCurveTo(wx + 25, H * 0.02, wx + 25, H * 0.12);
-    ctx.lineTo(wx + 25, H * 0.25);
+    ctx.moveTo(wx - 28, H * 0.25);
+    ctx.lineTo(wx - 28, H * 0.12);
+    ctx.quadraticCurveTo(wx - 28, H * 0.01, wx, H * 0.0);
+    ctx.quadraticCurveTo(wx + 28, H * 0.01, wx + 28, H * 0.12);
+    ctx.lineTo(wx + 28, H * 0.25);
     ctx.closePath();
     ctx.fill();
 
     // Vidriera de Colores Sacros
     const glassGrd = ctx.createLinearGradient(wx, H * 0.01, wx, H * 0.25);
     if(idx === 1) {
-      glassGrd.addColorStop(0, '#e86d6d'); glassGrd.addColorStop(0.5, '#f0b85d'); glassGrd.addColorStop(1, '#5ca9e6');
+      glassGrd.addColorStop(0, '#ff5555'); glassGrd.addColorStop(0.5, '#f7b846'); glassGrd.addColorStop(1, '#ffd97d');
     } else {
-      glassGrd.addColorStop(0, '#5ce6a3'); glassGrd.addColorStop(0.5, '#dbbe5c'); glassGrd.addColorStop(1, '#a15ce6');
+      glassGrd.addColorStop(0, '#3ae697'); glassGrd.addColorStop(0.5, '#e3c453'); glassGrd.addColorStop(1, '#b366ff');
     }
     ctx.fillStyle = glassGrd;
     ctx.beginPath();
-    ctx.roundRect(wx - 20, H * 0.04, 40, H * 0.2, [18, 18, 0, 0]);
+    ctx.roundRect(wx - 22, H * 0.03, 44, H * 0.21, [20, 20, 0, 0]);
     ctx.fill();
 
-    // Líneas de plomo (divisiones geométricas)
-    ctx.strokeStyle = '#322e38';
-    ctx.lineWidth = 1.5;
-    for(let l = 1; l < 5; l++) {
-      ctx.beginPath(); ctx.moveTo(wx - 20, H * 0.04 + (l * 25)); ctx.lineTo(wx + 20, H * 0.04 + (l * 25)); ctx.stroke();
+    // Líneas de plomo
+    ctx.strokeStyle = '#26222b';
+    ctx.lineWidth = 2;
+    for(let l = 1; l < 6; l++) {
+      ctx.beginPath(); ctx.moveTo(wx - 22, H * 0.03 + (l * 22)); ctx.lineTo(wx + 22, H * 0.03 + (l * 22)); ctx.stroke();
     }
-    ctx.beginPath(); ctx.moveTo(wx, H * 0.04); ctx.lineTo(wx, H * 0.24); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx, H * 0.03); ctx.lineTo(wx, H * 0.24); ctx.stroke();
     ctx.restore();
   });
 
-  // 2. PROYECCIÓN DE LUZ DE LAS VIDRIERAS AL SUELO
+  // 2. PROYECCIÓN DE LUZ DE LAS VIDRIERAS
   windowPositions.forEach((wx, idx) => {
     ctx.save();
     ctx.globalCompositeOperation = 'lighten';
     
-    // El rayo de luz se ensancha al proyectarse sobre las baldosas
-    const rayGrd = ctx.createLinearGradient(wx, H * 0.24, wx, H * 0.9);
-    let colorReflect = idx === 1 ? 'rgba(240, 184, 93, 0.15)' : 'rgba(161, 92, 230, 0.12)';
-    rayGrd.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
-    rayGrd.addColorStop(0.4, colorReflect);
+    const rayGrd = ctx.createLinearGradient(wx, H * 0.24, wx, H * 0.95);
+    let colorReflect = idx === 1 ? 'rgba(247, 184, 70, 0.38)' : 'rgba(179, 102, 255, 0.28)';
+    rayGrd.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+    rayGrd.addColorStop(0.25, colorReflect);
     rayGrd.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = rayGrd;
     ctx.beginPath();
-    ctx.moveTo(wx - 18, H * 0.24);
-    ctx.lineTo(wx + 18, H * 0.24);
-    ctx.lineTo(wx + 110, H * 0.95);
-    ctx.lineTo(wx - 110, H * 0.95);
+    ctx.moveTo(wx - 22, H * 0.24);
+    ctx.lineTo(wx + 22, H * 0.24);
+    ctx.lineTo(wx + 190, H * 1.0);
+    ctx.lineTo(wx - 190, H * 1.0);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
   });
 
-  // 3. CRUZ CENTRAL MONUMENTAL
-  const cx = W * 0.5, cy = H * 0.32;
+  // 3. LA GRAN CRUZ CENTRAL (¡Aún más alta e imponente!)
+  const baseColumnasY = H * 0.46;
+  const cx = W * 0.5;
+  
   ctx.save();
-  // Altar de base
-  ctx.fillStyle = '#4f4957';
-  ctx.fillRect(cx - 35, cy + 15, 70, 20);
-  ctx.strokeStyle = '#3a3540';
-  ctx.strokeRect(cx - 35, cy + 15, 70, 20);
-  ctx.fillStyle = '#dbb56e'; // Paño dorado sobre altar
-  ctx.fillRect(cx - 20, cy + 15, 40, 4);
-
-  // Gran Cruz Dorada Brillante
-  ctx.fillStyle = '#d1b464';
-  ctx.strokeStyle = '#8a7135';
+  // Altar de base robusto asentado justo en la línea de las columnas
+  ctx.fillStyle = '#433d4a';
+  ctx.fillRect(cx - 50, baseColumnasY - 15, 100, 20);
+  ctx.strokeStyle = '#2e2a33';
   ctx.lineWidth = 2;
-  // Poste Vertical
-  ctx.fillRect(cx - 5, cy - 55, 10, 70);
-  ctx.strokeRect(cx - 5, cy - 55, 10, 70);
-  // Poste Horizontal
-  ctx.fillRect(cx - 22, cy - 38, 44, 10);
-  ctx.strokeRect(cx - 22, cy - 38, 44, 10);
-  // Joya de la cruz
-  ctx.fillStyle = '#e66d6d';
-  ctx.beginPath(); ctx.arc(cx, cy - 33, 3, 0, Math.PI*2); ctx.fill();
+  ctx.strokeRect(cx - 50, baseColumnasY - 15, 100, 20);
+  ctx.fillStyle = '#d1b464'; // Mantel de altar dorado
+  ctx.fillRect(cx - 35, baseColumnasY - 15, 70, 4);
+
+  // Gran brillo elíptico místico de fondo detrás de la cruz (reajustado al nuevo centro de la cruz)
+  const crossGlow = ctx.createRadialGradient(cx, baseColumnasY - 155, 5, cx, baseColumnasY - 155, 160);
+  crossGlow.addColorStop(0, 'rgba(246, 227, 163, 0.5)');
+  crossGlow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = crossGlow;
+  ctx.beginPath(); ctx.arc(cx, baseColumnasY - 155, 160, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#eac76c'; // Oro vivo
+  ctx.strokeStyle = '#735f2b';
+  ctx.lineWidth = 2;
+
+  // Proporciones colosales y estilizadas:
+  // Mástil Vertical (Estrecho: 12px, Altura monumental: 280px)
+  // Ahora empieza en (baseColumnasY - 15 - 280) = baseColumnasY - 295 y termina exactamente encima del altar
+  ctx.fillRect(cx - 6, baseColumnasY - 295, 12, 280);
+  ctx.strokeRect(cx - 6, baseColumnasY - 295, 12, 280);
+
+  // Travesaño Horizontal (Estrecho: 12px, Ancho proporcional: 96px)
+  // Reajustado proporcionalmente para que se mantenga en la parte superior (tercio superior)
+  ctx.fillRect(cx - 48, baseColumnasY - 225, 96, 12);
+  ctx.strokeRect(cx - 48, baseColumnasY - 225, 96, 12);
+  
+  // Joya mística brillante en la intersección superior (alineada con el nuevo centro del travesaño)
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(cx, baseColumnasY - 219, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#e85d5d';
+  ctx.beginPath(); ctx.arc(cx, baseColumnasY - 219, 3, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 
-  // 4. CONFESIONARIO DE MADERA (A la derecha)
+  // 4. CONFESIONARIO DE MADERA
   const confX = W * 0.88, confY = H * 0.45;
   ctx.save();
-  ctx.fillStyle = '#4a3b2c'; // Madera oscura
+  ctx.fillStyle = '#4a3b2c';
   ctx.strokeStyle = '#2b2118';
   ctx.lineWidth = 2;
-  // Estructura triple clásica
   ctx.fillRect(confX - 35, confY, 70, 75);
   ctx.strokeRect(confX - 35, confY, 70, 75);
-  // Puerta Central (Sacerdote)
   ctx.fillStyle = '#362a1e';
   ctx.fillRect(confX - 12, confY + 10, 24, 65);
   ctx.strokeRect(confX - 12, confY + 10, 24, 65);
-  // Rejillas laterales para los penitentes
   ctx.fillStyle = '#241b13';
   ctx.fillRect(confX - 28, confY + 25, 10, 20);
   ctx.fillRect(confX + 18, confY + 25, 10, 20);
-  // Cruz ornamental sobre el confesionario
   ctx.fillStyle = '#bc9a50';
   ctx.fillRect(confX - 2, confY - 10, 4, 10);
   ctx.fillRect(confX - 6, confY - 7, 12, 3);
   ctx.restore();
 
-  // 5. BANCOS DE LA IGLESIA (Simétricos a ambos lados del pasillo central)
+  // 5. BANCOS DE LA IGLESIA
   ctx.save();
-  ctx.fillStyle = '#5c4a36'; // Madera rústica medieval
+  ctx.fillStyle = '#5c4a36';
   ctx.strokeStyle = '#382b1f';
   ctx.lineWidth = 1.5;
-  
   const totalFilasBancos = 4;
   for(let r = 0; r < totalFilasBancos; r++) {
     let bY = H * 0.58 + r * 40;
-    // Bancos Izquierdos
-    ctx.fillRect(W * 0.18, bY, 140, 7); ctx.strokeRect(W * 0.18, bY, 140, 7); // Asiento
-    ctx.fillRect(W * 0.18, bY - 8, 140, 3); // Respaldo
-    ctx.fillRect(W * 0.18, bY - 8, 4, 15); ctx.fillRect(W * 0.18 + 136, bY - 8, 4, 15); // Patas laterales
-
-    // Bancos Derechos
+    ctx.fillRect(W * 0.18, bY, 140, 7); ctx.strokeRect(W * 0.18, bY, 140, 7);
+    ctx.fillRect(W * 0.18, bY - 8, 140, 3);
+    ctx.fillRect(W * 0.18, bY - 8, 4, 15); ctx.fillRect(W * 0.18 + 136, bY - 8, 4, 15);
     ctx.fillRect(W * 0.62, bY, 140, 7); ctx.strokeRect(W * 0.62, bY, 140, 7);
     ctx.fillRect(W * 0.62, bY - 8, 140, 3);
     ctx.fillRect(W * 0.62, bY - 8, 4, 15); ctx.fillRect(W * 0.62 + 136, bY - 8, 4, 15);
   }
   ctx.restore();
 
-  // 6. FIGURAS RELIGIOSAS / VELAS EN LOS LATERALES
+  // 6. FIGURAS RELIGIOSAS / VELAS
   const figX = W * 0.12, figY = H * 0.42;
   ctx.save();
-  // Pedestal de piedra de la estatua
   ctx.fillStyle = '#787380';
   ctx.fillRect(figX - 10, figY, 20, 25);
   ctx.strokeRect(figX - 10, figY, 20, 25);
-  // Imagen tallada con túnica azulada
   ctx.fillStyle = '#5a718a';
   ctx.beginPath(); ctx.roundRect(figX - 6, figY - 26, 12, 26, [4, 4, 0, 0]); ctx.fill();
-  ctx.fillStyle = '#dbbf8a'; // Cabeza figura
+  ctx.fillStyle = '#dbbf8a';
   ctx.beginPath(); ctx.arc(figX, figY - 29, 4, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#e6c86d'; // Aureola
+  ctx.fillStyle = '#e6c86d';
   ctx.beginPath(); ctx.arc(figX, figY - 29, 6, 0, Math.PI*2); ctx.stroke();
 
-  // Velas Encendidas al fondo a la izquierda
   ctx.fillStyle = '#423d47';
-  ctx.fillRect(W * 0.05, H * 0.46, 40, 6); // Estante de hierro para las ofrendas
+  ctx.fillRect(W * 0.05, H * 0.46, 40, 6);
   for(let v = 0; v < 6; v++) {
     let vx = W * 0.06 + (v * 6);
-    ctx.fillStyle = '#f0ebd8'; // Cera de la vela
+    ctx.fillStyle = '#f0ebd8';
     ctx.fillRect(vx, H * 0.40, 3, 6);
-    // Llama brillante animada
     ctx.fillStyle = Math.random() < 0.5 ? '#f09135' : '#f7c343';
     ctx.beginPath(); ctx.arc(vx + 1.5, H * 0.39 + Math.sin(Date.now()*0.02 + v)*0.8, 1.5, 0, Math.PI*2); ctx.fill();
   }
   ctx.restore();
 
-  // 7. COLUMNAS GÓTICAS MONUMENTALES CON ARCOS DE PIEDRA CLARA
+  // 7. COLUMNAS GÓTICAS MONUMENTALES
   const colPositions = [W * 0.18, W * 0.41, W * 0.59, W * 0.82];
   colPositions.forEach(cx => {
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.06)';
     ctx.fillRect(cx - 14, 0, 28, H);
-
-    ctx.fillStyle = '#97c3c2';
+    ctx.fillStyle = '#cbd4c5';
     ctx.fillRect(cx - 10, 0, 20, H * 0.48);
-    
-    ctx.strokeStyle = '#bfe0df';
+    ctx.strokeStyle = '#b0bba8';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(cx - 4, 0); ctx.lineTo(cx - 4, H * 0.48);
     ctx.moveTo(cx + 4, 0); ctx.lineTo(cx + 4, H * 0.48);
     ctx.stroke();
-
-    ctx.fillStyle = '#7ca3a2';
+    ctx.fillStyle = '#b0bba8';
     ctx.fillRect(cx - 14, H * 0.46, 28, 7);
     ctx.fillRect(cx - 12, H * 0.44, 24, 5);
     ctx.fillRect(cx - 14, H * 0.08, 28, 8);
-    
-    ctx.strokeStyle = '#97c3c2';
+    ctx.strokeStyle = '#cbd4c5';
     ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.quadraticCurveTo(cx - 40, H * 0.04, cx - 120, 0);
@@ -2133,6 +3424,21 @@ function loopInside(ts){
     f.update(dt); f.draw(inCtx);
   });
 
+  petFaithfuls.forEach(f => {
+    priests.forEach(p => { if(p.isInAura(f.x, f.y)) f._priestMult = 2; else f._priestMult = 1; });
+    f.update(dt); f.draw(inCtx);
+  });
+
+  ghostFaithfuls.forEach(f => {
+    priests.forEach(p => { if(p.isInAura(f.x, f.y)) f._priestMult = 2; else f._priestMult = 1; });
+    f.update(dt); f.draw(inCtx);
+  });
+
+  demonFaithfuls.forEach(f => {
+    priests.forEach(p => { if(p.isInAura(f.x, f.y)) f._priestMult = 2; else f._priestMult = 1; });
+    f.update(dt); f.draw(inCtx);
+  });
+
   acolytes.forEach(a => { a.update(dt); a.draw(inCtx); });
   priests.forEach(p => { p.update(dt); p.draw(inCtx); });
 
@@ -2142,21 +3448,36 @@ function loopInside(ts){
     return keep;
   });
 
-  if(G.mouseMovedThisFrame && G.faithfulCount > 0){
-    const r = U.mouseRadius.v;
+  // ── Paloma interior (Espíritu Santo en la Capilla) ──
+  if(!G._chapelDoveX) { G._chapelDoveX = inCanvas.width/2; G._chapelDoveY = inCanvas.height*0.35; }
+  if(!G._chapelDoveWing) G._chapelDoveWing = 0;
+  G._chapelDoveWing += dt * 7;
+
+  // Snap directly to cursor
+  G._chapelDoveX = G.cursorX;
+  G._chapelDoveY = G.cursorY;
+
+  if(G.faithfulCount > 0) {
+    const r = 55;
+    // Soft glow around dove
     inCtx.save();
     const pulse = 0.8 + 0.2 * Math.sin(Date.now() * 0.008);
-    let mouseGrd = inCtx.createRadialGradient(G.cursorX, G.cursorY, r * 0.1, G.cursorX, G.cursorY, r);
-    mouseGrd.addColorStop(0, `rgba(246, 227, 163, ${0.35 * pulse})`);
-    mouseGrd.addColorStop(1, 'rgba(246, 227, 163, 0)');
-    inCtx.fillStyle = mouseGrd;
-    inCtx.beginPath(); inCtx.arc(G.cursorX, G.cursorY, r, 0, Math.PI * 2); inCtx.fill();
+    let doveGrd = inCtx.createRadialGradient(G._chapelDoveX, G._chapelDoveY, r*0.1, G._chapelDoveX, G._chapelDoveY, r);
+    doveGrd.addColorStop(0, `rgba(246, 227, 163, ${0.3 * pulse})`);
+    doveGrd.addColorStop(1, 'rgba(246, 227, 163, 0)');
+    inCtx.fillStyle = doveGrd;
+    inCtx.beginPath(); inCtx.arc(G._chapelDoveX, G._chapelDoveY, r, 0, Math.PI*2); inCtx.fill();
     inCtx.restore();
 
-    faithful.forEach(f => {
-      const dx = f.x - G.cursorX, dy = f.y - G.cursorY;
-      if(Math.sqrt(dx*dx+dy*dy) < r) f.activate(f._priestMult || 1);
+    // Activate faithfuls in range
+    [faithful, petFaithfuls, ghostFaithfuls, demonFaithfuls].forEach(arr => {
+      arr.forEach(f => {
+        const dx = f.x - G._chapelDoveX, dy = f.y - G._chapelDoveY;
+        if(Math.sqrt(dx*dx+dy*dy) < r) f.activate(f._priestMult || 1);
+      });
     });
+
+    drawChapelDove(inCtx, G._chapelDoveX, G._chapelDoveY, G._chapelDoveWing);
   }
   G.mouseMovedThisFrame = false;
 
@@ -2169,21 +3490,135 @@ function loopInside(ts){
 // ══════════════════════════════════════════════════════
 // CONTROL DE RONDAS Y SINOPSIS
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SISTEMA DE MUNDOS
+// ══════════════════════════════════════════════════════
+const WORLDS = {
+  base: {
+    id: 'base', name: 'La Aldea', icon: '🌿',
+    desc: 'El mundo original. Aldeanos errantes esperan la palabra divina.',
+    sub: 'Siempre disponible', soulsRequired: 0, faithCost: 0, moneyCost: 0,
+    purchased: true, unlocks: [], bgDesc: 'Verde pastoral tranquilo',
+  },
+  fauna: {
+    id: 'fauna', name: 'El Prado Sagrado', icon: '🐾',
+    desc: 'Un mundo lleno de vida animal. Mascotas sagradas deambulan buscando redención.',
+    sub: 'Requiere 1.000 almas totales',
+    soulsRequired: 1000, faithCost: 80, moneyCost: 80,
+    purchased: false, unlocks: ['petUnlock'], bgDesc: 'Verde vibrante con flores',
+  },
+  spectral: {
+    id: 'spectral', name: 'El Más Allá', icon: '👻',
+    desc: 'Un mundo de niebla y espíritus. Fantasmas y tumbas pueblan el paisaje.',
+    sub: 'Requiere 5.000 almas totales',
+    soulsRequired: 5000, faithCost: 200, moneyCost: 200,
+    purchased: false, unlocks: ['ghostUnlock','tombUnlock'], bgDesc: 'Azulado y espectral',
+  },
+  infernal: {
+    id: 'infernal', name: 'El Infierno', icon: '🔥',
+    desc: 'Las puertas del averno se han abierto. Demonios invaden buscando ser redimidos.',
+    sub: 'Requiere 15.000 almas totales',
+    soulsRequired: 15000, faithCost: 600, moneyCost: 600,
+    purchased: false, unlocks: ['demonUnlock'], bgDesc: 'Rojo infernal con grietas',
+  },
+};
+
+function renderWorldSelector(){
+  const el = document.getElementById('world-dropdown-cards');
+  if(!el) return;
+
+  // Update toggle button label to show current world
+  const currentW = WORLDS[G.currentWorld];
+  const btnLabel = document.getElementById('btn-world-select');
+  if(btnLabel) btnLabel.textContent = `🗺️ ${currentW ? currentW.icon + ' ' + currentW.name : 'Elegir Escenario'} ▲`;
+
+  el.innerHTML = '';
+  Object.values(WORLDS).forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'world-card';
+
+    const unlocked = G.soulsTotal >= w.soulsRequired;
+    const isActive = G.currentWorld === w.id;
+    const canAfford = G.faith >= w.faithCost && G.money >= w.moneyCost;
+
+    if(isActive) card.classList.add('active');
+    if(!unlocked || (!w.purchased && !canAfford)) card.classList.add('locked');
+
+    let badge = '';
+    if(isActive) badge = '<div class="wc-badge active">ACTIVO</div>';
+    else if(w.purchased) badge = '<div class="wc-badge owned">COMPRADO</div>';
+
+    let costHtml = '';
+    if(!unlocked) {
+      costHtml = `<div class="wc-cost" style="color:#b44">🔒 ${w.soulsRequired.toLocaleString()} almas tot.</div>`;
+    } else if(!w.purchased) {
+      const affordable = G.faith >= w.faithCost && G.money >= w.moneyCost;
+      costHtml = `<div class="wc-cost" style="color:${affordable ? '#6a8a30' : '#a07820'}">🙏 ${w.faithCost} + 💰 ${w.moneyCost}</div>`;
+    } else {
+      costHtml = `<div class="wc-cost" style="color:#3a7a30">✔ Desbloqueado</div>`;
+    }
+
+    card.innerHTML = `
+      ${badge}
+      <div class="wc-icon">${w.icon}</div>
+      <div class="wc-name">${w.name}</div>
+      <div class="wc-sub">${w.desc}</div>
+      ${costHtml}
+    `;
+
+    if(unlocked && !w.purchased && canAfford) {
+      // Buy world
+      card.onclick = () => {
+        G.faith -= w.faithCost;
+        G.money -= w.moneyCost;
+        w.purchased = true;
+        w.unlocks.forEach(key => { if(U[key]) U[key].on = true; });
+        G.currentWorld = w.id;
+        renderWorldSelector();
+        renderChapelUpgradesList();
+        updateHUDs();
+      };
+    } else if(w.purchased && !isActive) {
+      // Select world
+      card.onclick = () => {
+        G.currentWorld = w.id;
+        renderWorldSelector();
+      };
+    }
+
+    el.appendChild(card);
+  });
+}
+
 function startRound(){
   if(G.isRoundActive) return;
   document.getElementById('start-overlay').classList.add('hidden');
   document.getElementById('round-over-overlay').classList.add('hidden');
   
-  sinners = []; pets = []; ghosts = []; tombs = []; doves = []; capturedDoves = [];
+  sinners = []; pets = []; ghosts = []; demons = []; tombs = []; doves = []; capturedDoves = [];
   particles = []; holyParticles = []; floatingTexts = []; lightningBolts = []; pulseRings = [];
+  lightBlasts = []; fireCrosses = []; missiles = []; tetherTargets = [];
+  missileTimer = 0; tetherTimer = 0; tetherPulseTimer = 0;
   G.soulsThisRound = 0; G.faithThisRound = 0; G.moneyThisRound = 0;
   G.roundTimer = 0;
   holyPulseTimer = 0;
+  petSpawnTimer = 0; ghostSpawnTimer = 0; tombSpawnTimer = 0; doveSpawnTimer = 0;
   G.isRoundActive = true;
-  spawnSinners();
-  
-  if(U.tombUnlock.on && Math.random() < 0.4) tombs.push(new Tomb());
+  G.doveX = outCanvas.width / 2;
+  G.doveY = outCanvas.height / 2 - 120;
+  G.doveVX = 0; G.doveVY = 0; G.doveWing = 0;
 
+  // Sync world-specific upgrades with current world
+  const isFauna    = G.currentWorld === 'fauna';
+  const isSpectral = G.currentWorld === 'spectral';
+  const isInfernal = G.currentWorld === 'infernal';
+  if(U.petUnlock)   U.petUnlock.on   = isFauna    && WORLDS.fauna.purchased;
+  if(U.ghostUnlock) U.ghostUnlock.on = isSpectral && WORLDS.spectral.purchased;
+  if(U.tombUnlock)  U.tombUnlock.on  = isSpectral && WORLDS.spectral.purchased;
+  if(U.demonUnlock) U.demonUnlock.on = isInfernal && WORLDS.infernal.purchased;
+
+  spawnSinners();
+  if(U.tombUnlock.on && Math.random() < 0.4) tombs.push(new Tomb());
   updateHUDs();
 }
 
@@ -2203,20 +3638,26 @@ function endRound(){
   document.getElementById('round-title').innerText = `Día ${G.day} Concluido`;
   document.getElementById('round-summary').innerText = `Tus sermones del día han calado en la comunidad, guiando a los descarriados de vuelta al redil.`;
   
+  // Compute records from previous rounds
+  const prev = G.roundHistory.slice(0,-1);
+  const bestSouls = prev.length ? Math.max(...prev.map(r=>r.souls)) : -1;
+  const bestFaith = prev.length ? Math.max(...prev.map(r=>r.faith)) : -1;
+  const bestMoney = prev.length ? Math.max(...prev.map(r=>r.money)) : -1;
+  const isNewSouls = G.soulsThisRound > bestSouls && G.roundHistory.length > 1;
+  const isNewFaith = G.faithThisRound > bestFaith && G.roundHistory.length > 1;
+  const isNewMoney = G.moneyThisRound > bestMoney && G.roundHistory.length > 1;
+  const recStyle = 'background:#fff3b0;border-color:#d4a800;box-shadow:0 0 8px rgba(212,168,0,0.35);';
+  const recBadge = '<div style="font-size:.65rem;color:#a07800;font-weight:700;margin-top:2px;">⭐ RÉCORD</div>';
+
   const statsBox = document.getElementById('round-stats-box');
   statsBox.innerHTML = `
-    <div class="stat-card"><div class="sc-label">✨ Almas</div><div class="sc-value">+${G.soulsThisRound}</div></div>
-    <div class="stat-card"><div class="sc-label">🙏 Fe Ganada</div><div class="sc-value">+${G.faithThisRound}</div></div>
-    <div class="stat-card"><div class="sc-label">💰 Ofrendas</div><div class="sc-value">+${G.moneyThisRound}</div></div>
+    <div class="stat-card" style="${isNewSouls?recStyle:''}"><div class="sc-label">✨ Almas</div><div class="sc-value">+${G.soulsThisRound}</div>${isNewSouls?recBadge:''}</div>
+    <div class="stat-card" style="${isNewFaith?recStyle:''}"><div class="sc-label">🙏 Fe Ganada</div><div class="sc-value">+${G.faithThisRound}</div>${isNewFaith?recBadge:''}</div>
+    <div class="stat-card" style="${isNewMoney?recStyle:''}"><div class="sc-label">💰 Ofrendas</div><div class="sc-value">+${G.moneyThisRound}</div>${isNewMoney?recBadge:''}</div>
   `;
   
   document.getElementById('round-over-overlay').classList.remove('hidden');
   
-  if(G.soulsTotal >= 15000) {
-    document.getElementById('victory-overlay').classList.remove('hidden');
-    document.getElementById('round-over-overlay').classList.add('hidden');
-  }
-
   G.day++;
   updateHUDs();
 }
@@ -2241,6 +3682,7 @@ function updateHUDs(){
   document.getElementById('tree-total-val').innerText = G.soulsTotal;
   document.getElementById('tree-faith-val').innerText = G.faith;
   document.getElementById('tree-money-val').innerText = G.money;
+  renderWorldSelector();
 }
 
 function switchView(view){
@@ -2258,13 +3700,15 @@ function switchView(view){
     resizeInCanvas();
     layoutFaithful();
     updateAcolytes();
-    // Actualizar sacerdotes
     const neededPriests = U.priest.count || 0;
     while(priests.length < neededPriests) priests.push(new Priest(priests.length));
     
+    // Always cancel any stale RAF and restart fresh
+    if(inRAF){ cancelAnimationFrame(inRAF); inRAF = null; }
     lastTimeIn = performance.now();
-    if(!inRAF) inRAF = requestAnimationFrame(loopInside);
+    inRAF = requestAnimationFrame(loopInside);
     renderChapelUpgradesList();
+    renderWorldSelector();
   }
 }
 
@@ -2283,6 +3727,10 @@ function renderChapelUpgradesList(){
     card.className = 'chapel-upg-card';
     
     let isLocked = G.soulsTotal < u.milestone;
+    // Some faithfuls require a world to be purchased
+    if(!isLocked && u.requiresWorld) {
+      isLocked = !WORLDS[u.requiresWorld] || !WORLDS[u.requiresWorld].purchased;
+    }
     let cost = Math.round(u.soulCost * Math.pow(u.sc, u.lv));
     if(u.isFaithful) cost = Math.round(u.bc * Math.pow(u.sc, G.faithfulCount));
     
@@ -2294,12 +3742,17 @@ function renderChapelUpgradesList(){
     let lvlStr = u.isFaithful ? `(Disp: ${G.faithfulCount})` : `(Nivel ${u.lv})`;
     if(u.isAcolyte) lvlStr = `(Posees: ${u.count || 0})`;
     if(u.isPriest) lvlStr = `(Posees: ${u.count || 0})`;
+    if(u.isPetFaithful) lvlStr = `(Posees: ${u.count || 0})`;
+    if(u.isGhostFaithful) lvlStr = `(Posees: ${u.count || 0})`;
+    if(u.isDemonFaithful) lvlStr = `(Posees: ${u.count || 0})`;
+    if(u.isPrayerCD) lvlStr = `(Cooldown: ${Math.max(0.5,u.v).toFixed(1)}s)`;
 
     card.innerHTML = `
       <div class="cu-name">${u.name} <span class="cu-level">${lvlStr}</span></div>
       <div class="cu-desc">${u.desc}</div>
       <div class="cu-cost">${isLocked ? '🔒 Bloqueado' : '✨ ' + cost + ' Almas'}</div>
-      ${isLocked ? `<div class="cu-milestone">Requiere ${u.milestone} almas tot.</div>` : ''}
+      ${isLocked && u.requiresWorld ? `<div class="cu-milestone">Requiere mundo: ${WORLDS[u.requiresWorld]?.name || u.requiresWorld}</div>` : ''}
+      ${isLocked && !u.requiresWorld && u.milestone > 0 ? `<div class="cu-milestone">Requiere ${u.milestone} almas tot.</div>` : ''}
     `;
     
     if(!isLocked && !cantAfford){
@@ -2313,6 +3766,18 @@ function renderChapelUpgradesList(){
         } else if(u.isPriest) {
           u.count = (u.count || 0) + 1;
           u.lv++;
+        } else if(u.isPetFaithful) {
+          u.count = (u.count || 0) + 1;
+          u.lv++;
+        } else if(u.isGhostFaithful) {
+          u.count = (u.count || 0) + 1;
+          u.lv++;
+        } else if(u.isDemonFaithful) {
+          u.count = (u.count || 0) + 1;
+          u.lv++;
+        } else if(u.isPrayerCD) {
+          u.lv++;
+          u.v = Math.max(0.5, u.v + u.inc); // inc is negative
         } else {
           u.lv++;
           u.v += u.inc;
@@ -2343,9 +3808,9 @@ function initTreeNodes(){
     holyDmg:     {x: 120, y: -140},
     sinnerCount: {x: 0,   y: -220},
     roundTime:   {x: -140,y: -260},
+    playerSpeed: {x: 140, y: -320},
     soulsPerConv:{x: 140, y: -260},
-    mouseRadius: {x: 0,   y: -340},
-    chainConv:   {x: 0,   y: -440},
+    chainConv:   {x: 0,   y: -380},
     
     petUnlock:   {x: -350, y: 50},
     petCount:    {x: -480, y: -20},
@@ -2358,6 +3823,7 @@ function initTreeNodes(){
     goldenBonus: {x: 480,  y: 120},
     
     marketUnlock:{x: -250, y: 350},
+    marketRate:  {x: -250, y: 480},
     marketDmg:   {x: -380, y: 280},
     marketRange: {x: -380, y: 420},
     marketJumps: {x: -500, y: 350},
@@ -2379,6 +3845,11 @@ function initTreeNodes(){
     tombRate:    {x: -140, y: 1020},
     tombSouls:   {x: 140,  y: 1020},
     tombGhosts:  {x: 0,    y: 1140},
+
+    demonUnlock: {x: 0,    y: 1320},
+    demonCount:  {x: -140, y: 1440},
+    demonSouls:  {x: 140,  y: 1440},
+    demonChain:  {x: 0,    y: 1560},
   };
   
   treeNodes = [];
@@ -2426,14 +3897,14 @@ function renderTree(){
   }
   // Enlaces de progresión lógica
   drawLink('holyRadius','holyRate'); drawLink('holyRadius','holyDmg'); drawLink('holyRadius','sinnerCount');
-  drawLink('sinnerCount','roundTime'); drawLink('sinnerCount','soulsPerConv'); drawLink('soulsPerConv','mouseRadius');
-  drawLink('mouseRadius','chainConv');
+  drawLink('sinnerCount','roundTime'); drawLink('sinnerCount','soulsPerConv'); drawLink('sinnerCount','playerSpeed'); drawLink('soulsPerConv','chainConv');
   drawLink('petUnlock','petCount'); drawLink('petUnlock','petSouls'); drawLink('petCount','petChain'); drawLink('petSouls','petOwner');
   drawLink('goldenUnlock','goldenRate'); drawLink('goldenUnlock','goldenBonus');
-  drawLink('marketUnlock','marketDmg'); drawLink('marketUnlock','marketRange'); drawLink('marketRange','marketJumps');
-  drawLink('doveUnlock','doveRate'); drawLink('doveUnlock','doveDmg'); drawLink('doveRate','doveSpeed'); drawLink('doveRate','doveRadius'); drawLink('doveDmg','doveDuration'); drawLink('doveDuration','doveFlock');
+  drawLink('marketUnlock','marketRate'); drawLink('marketUnlock','marketDmg'); drawLink('marketUnlock','marketRange'); drawLink('marketRange','marketJumps');
+  drawLink('doveUnlock','doveRate'); drawLink('doveUnlock','doveDmg'); drawLink('doveRate','doveSpeed'); drawLink('doveDmg','doveDuration'); drawLink('doveDuration','doveFlock');
   drawLink('ghostUnlock','ghostCount'); drawLink('ghostUnlock','ghostSouls'); drawLink('ghostCount','ghostChain');
   drawLink('ghostUnlock','tombUnlock'); drawLink('tombUnlock','tombRate'); drawLink('tombUnlock','tombSouls'); drawLink('tombSouls','tombGhosts');
+  drawLink('tombUnlock','demonUnlock'); drawLink('demonUnlock','demonCount'); drawLink('demonUnlock','demonSouls'); drawLink('demonSouls','demonChain');
 
   // Nodo Raíz Central (La Iglesia)
   treeCtx.fillStyle = '#564f5e';
@@ -2445,7 +3916,7 @@ function renderTree(){
   // Dibujar nodos individuales de habilidades
   treeNodes.forEach(n => {
     const u = n.ref;
-    const isLocked = G.soulsTotal < u.milestone;
+    const isLocked = (G.soulsTotal < u.milestone) || (u.requiresWorld && !WORLDS[u.requiresWorld]?.purchased);
     const cost = getNodeCurrentCost(n);
     
     let nodeBg = '#fff';
@@ -2453,7 +3924,11 @@ function renderTree(){
     
     if(isLocked) { nodeBg = '#cbd5e1'; strokeColor = '#94a3b8'; }
     else if(u.isToggle && u.on) { nodeBg = '#dcfce7'; strokeColor = '#15803d'; }
-    else if(u.lv > 1) { nodeBg = '#fef9c3'; strokeColor = '#ca8a04'; }
+    else {
+      const canAfford = (!u.faith || G.faith >= cost) && (!u.money || G.money >= cost);
+      if(canAfford) { nodeBg = '#fef9c3'; strokeColor = '#ca8a04'; }
+      else { nodeBg = '#ffffff'; strokeColor = '#94a3b8'; }
+    }
     
     if(n === hoveredNode && !isLocked) { strokeColor = '#ef4444'; }
 
@@ -2481,7 +3956,7 @@ function renderTree(){
   treeCtx.restore();
 
   // ── Barra de progreso al próximo hito (UI fija, fuera de la cámara) ──
-  const MILESTONES = [100, 200, 500, 1000, 1500, 2000, 2500, 3000, 5000, 10000];
+  const MILESTONES = [100, 200, 500, 1000, 1500, 2000, 2500, 3000, 5000, 10000, 15000];
   const nextMilestone = MILESTONES.find(m => m > G.soulsTotal) || null;
   const W2 = treeCanvas.width, H2 = treeCanvas.height;
   if(nextMilestone){
@@ -2511,7 +3986,7 @@ function updateTreeTooltip(n, mx, my){
   
   const u = n.ref;
   const cost = getNodeCurrentCost(n);
-  const isLocked = G.soulsTotal < u.milestone;
+  const isLocked = (G.soulsTotal < u.milestone) || (u.requiresWorld && !WORLDS[u.requiresWorld]?.purchased);
   
   document.getElementById('tt-name').innerText = u.name + (u.isToggle && u.on ? " [ACTIVADO]" : "");
   document.getElementById('tt-desc').innerText = u.desc;
@@ -2526,7 +4001,11 @@ function updateTreeTooltip(n, mx, my){
   
   const lockEl = document.getElementById('tt-locked');
   if(isLocked) {
-    lockEl.innerText = `🔒 Bloqueado: Requiere haber salvado ${u.milestone} almas en total alguna vez.`;
+    if(u.requiresWorld && !WORLDS[u.requiresWorld]?.purchased) {
+      lockEl.innerText = `🔒 Requiere comprar el mundo: ${WORLDS[u.requiresWorld]?.name || u.requiresWorld}`;
+    } else {
+      lockEl.innerText = `🔒 Bloqueado: Requiere haber salvado ${u.milestone} almas en total alguna vez.`;
+    }
     lockEl.style.display = 'block';
   } else {
     lockEl.style.display = 'none';
@@ -2541,7 +4020,7 @@ treeCanvas.addEventListener('mousedown', e => {
   if(e.button === 0){
     if(hoveredNode) {
       const u = hoveredNode.ref;
-      const isLocked = G.soulsTotal < u.milestone;
+      const isLocked = (G.soulsTotal < u.milestone) || (u.requiresWorld && !WORLDS[u.requiresWorld]?.purchased);
       const cost = getNodeCurrentCost(hoveredNode);
       if(!isLocked) {
         let canBuy = true;
@@ -2637,6 +4116,27 @@ function setupInput(){
     }
   });
 
+  document.getElementById('btn-world-select').onclick = () => {
+    const dd = document.getElementById('world-dropdown');
+    const isOpen = dd.classList.contains('open');
+    dd.classList.toggle('open');
+    document.getElementById('btn-world-select').textContent = 
+      (isOpen ? '▲' : '▼').replace('▲','▼').replace('▼', isOpen ? '▲' : '▼');
+    const currentW = WORLDS[G.currentWorld];
+    document.getElementById('btn-world-select').textContent = 
+      `🗺️ ${currentW ? currentW.icon + ' ' + currentW.name : 'Elegir Escenario'} ${isOpen ? '▲' : '▼'}`;
+    if(!isOpen) renderWorldSelector();
+  };
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('world-dropdown');
+    const btn = document.getElementById('btn-world-select');
+    if(dd && btn && !dd.contains(e.target) && !btn.contains(e.target)) {
+      dd.classList.remove('open');
+      renderWorldSelector();
+    }
+  });
   document.getElementById('start-btn').onclick = startRound;
   document.getElementById('btn-preach-again').onclick = startRound;
   document.getElementById('btn-enter-chapel').onclick = () => switchView('inside');
@@ -2654,12 +4154,117 @@ function setupInput(){
   document.getElementById('btn-restart').onclick = () => window.location.reload();
 }
 
+// ══════════════════════════════════════════════════════
+// INTRO CINEMÁTICA
+// ══════════════════════════════════════════════════════
+const INTRO_SLIDES = [
+  "Arrepentíos...\npues el fin de los tiempos está cerca.",
+  "Millones de almas deberán ser salvadas\nantes del juicio final.",
+  "Y tú, una paloma, no aguantabas más\ny lamentablemente...",
+  "acabas de cagarte sobre el Papa.",
+  "Como castigo, deberás salvar más almas\nque cualquier otro ser vivo de la historia.",
+  "Buena suerte paloma.\nLa vas a necesitar.",
+];
+
+let introState = 'title'; // 'title' | 'slides' | 'done'
+let introSlideIndex = -1;
+let introAnimating = false;
+
+function introUpdateDots(idx) {
+  document.querySelectorAll('.intro-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function introShowSlide(idx) {
+  if(introAnimating) return;
+  introAnimating = true;
+
+  const textEl = document.getElementById('intro-slide-text');
+
+  // Exit animation del texto actual
+  textEl.classList.remove('visible');
+  textEl.classList.add('exit');
+
+  setTimeout(() => {
+    // Cambiar texto — white-space:pre respeta los \n directamente
+    textEl.textContent = INTRO_SLIDES[idx];
+
+    textEl.classList.remove('exit');
+
+    // Forzar reflow para que la transición dispare
+    void textEl.offsetWidth;
+
+    // Enter animation
+    textEl.classList.add('visible');
+    introUpdateDots(idx);
+    introAnimating = false;
+  }, 420);
+}
+
+function introHandleClick() {
+  if(introAnimating) return;
+
+  if(introState === 'title') {
+    // Pasar de pantalla de título a slides
+    introState = 'slides';
+    introSlideIndex = 0;
+
+    // Ocultar pantalla de título
+    const titleEl = document.getElementById('intro-title-screen');
+    titleEl.classList.add('hidden-fade');
+    setTimeout(() => { titleEl.style.display = 'none'; }, 500);
+
+    // Mostrar controles de slides
+    document.getElementById('intro-progress').style.display = 'flex';
+    document.getElementById('intro-click-hint').style.display = 'block';
+
+    introShowSlide(0);
+    return;
+  }
+
+  if(introState === 'slides') {
+    introSlideIndex++;
+    if(introSlideIndex < INTRO_SLIDES.length) {
+      introShowSlide(introSlideIndex);
+    } else {
+      // Última slide pasada → cerrar intro y mostrar juego
+      introState = 'done';
+      introFinish();
+    }
+  }
+}
+
+function introFinish() {
+  const screen = document.getElementById('intro-screen');
+  // Fade out de toda la intro
+  screen.style.transition = 'opacity 0.6s ease';
+  screen.style.opacity = '0';
+  setTimeout(() => {
+    screen.classList.add('hidden');
+    screen.style.opacity = '';
+    screen.style.transition = '';
+  }, 620);
+}
+
+document.getElementById('intro-screen').addEventListener('click', introHandleClick);
+
+// También avanzar con teclado (Space / Enter / flecha derecha)
+document.addEventListener('keydown', e => {
+  if(introState === 'done') return;
+  if(e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    introHandleClick();
+  }
+});
+
 // Inicializar el juego al cargar la página
 window.onload = () => {
   resizeOutCanvas();
   setupInput();
   updateHUDs();
   switchView('outside');
+  // El loopOutside arranca solo (el canvas se ve detrás de la intro como fondo)
 };
 </script>
 </body>
